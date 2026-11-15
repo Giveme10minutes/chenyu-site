@@ -2,8 +2,6 @@ import { butterflyPaths } from "./butterflyPaths.js";
 
 const transitionStart = 1.78;
 const transitionEnd = 3.17;
-const handoffScroll = 2.65;
-const endingDuration = 650;
 
 export function attachScrollScenes(scene) {
   const stage = scene.querySelector(".stage");
@@ -17,8 +15,6 @@ export function attachScrollScenes(scene) {
   let frame = 0;
   let transitionScroll;
   let previousFrameTime;
-  let endingStartedAt;
-  let endingStartProgress;
 
   function clamp(value) {
     return Math.max(0, Math.min(1, value));
@@ -62,31 +58,7 @@ export function attachScrollScenes(scene) {
     scene.style.setProperty("--cue-rise", 1 - (1 - cueFade) ** 1.7);
     scene.style.setProperty("--cue-scale", cueScale);
     cue.classList.toggle("is-hidden", cueFade === 1);
-
-    advanceTransition(scroll, now);
-    renderTransition(transitionScroll, width / height);
-  }
-
-  function advanceTransition(scroll, now) {
-    const reachedHandoff = scroll >= handoffScroll;
-    if (!reachedHandoff) endingStartedAt = undefined;
-
-    const displayedProgress = transitionScroll ?? handoffScroll;
-    if (reachedHandoff && endingStartedAt === undefined && displayedProgress >= handoffScroll - 0.025) {
-      endingStartedAt = now;
-      endingStartProgress = displayedProgress;
-    }
-
-    if (endingStartedAt !== undefined) {
-      const elapsed = clamp((now - endingStartedAt) / endingDuration);
-      const progress = 1 - (1 - elapsed) ** 2;
-      transitionScroll = endingStartProgress + (transitionEnd - endingStartProgress) * progress;
-      previousFrameTime = undefined;
-      if (elapsed < 1) scheduleRender();
-      return;
-    }
-
-    const target = Math.max(transitionStart, Math.min(handoffScroll, scroll));
+    const target = Math.max(transitionStart, Math.min(transitionEnd, scroll));
     if (transitionScroll === undefined || Math.abs(target - transitionScroll) < 0.005) {
       transitionScroll = target;
       previousFrameTime = undefined;
@@ -97,6 +69,8 @@ export function attachScrollScenes(scene) {
       previousFrameTime = now;
       scheduleRender();
     }
+
+    renderTransition(transitionScroll, width / height);
   }
 
   function renderTransition(scroll, aspectRatio) {
@@ -152,7 +126,6 @@ export function attachScrollScenes(scene) {
       frame = 0;
       transitionScroll = undefined;
       previousFrameTime = undefined;
-      endingStartedAt = undefined;
       landing.inert = false;
       portrait.inert = false;
       flight.classList.remove("is-flying");

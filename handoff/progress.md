@@ -64,3 +64,21 @@
 - 保留缓动与画面交接节奏，加密全屏蝶群。桌面从二十六只增至四十二只，手机从十四只增至二十四只，单只最大尺寸沿用上一版。构建通过，并在桌面和两种手机宽度验证中段数量、九个区域的分布、快速滚动落点、回滚和减少动态效果。
 - 将蝶群基础宽度再放大约 20%。构建通过，并在桌面和两种手机宽度验证新尺寸与九个区域的分布。
 - 试做滚动与自动收尾的衔接。书架开始露出后，剩余蝶群和纸面按约 650 毫秒完成转场，页面滚动位置仍由用户掌控。往回滑过接力点可打断并恢复滚动控制。同步缩短固定舞台的滚动距离。用 Chrome 核验停在接力点前后、打断收尾、快速下滑与减少动态效果。
+
+## 手动转场与蝶群密度分段 · 2026-11-15
+
+- 在 `codex/blog-transition-experiment` 恢复 `084dc90` 的手动滚动方式。前段小群从右下角先飞入，中段六种蝴蝶一起铺满画面，末段各自散开。桌面共六十六条路径，手机共三十六条。保留肖像显现、滚动缓动和暖白纸面展开。
+- 构建通过。Chrome 在桌面及两个手机宽度验证稀疏出场、全屏高密度、疏散收尾，以及停在后段时画面停住。回滚、快速滚动、减少动态效果及无 JavaScript 的浏览路径均通过。
+- 三种透明素材由内置图片生成工具生成，保存在 `docs/showcase/butterfly-amber.webp`、`docs/showcase/butterfly-jade.webp` 和 `docs/showcase/butterfly-rose.webp`。
+
+琥珀橙素材提示词
+
+> A single isolated realistic amber orange butterfly, wings rounded and slightly scalloped with rich burnt ochre, a subtle dark brown border and fine pale vein markings, no eyespots. Dorsal top-down orthographic view, body perfectly centered and straight upright, head up, wings fully open flat and symmetrical. Clean crisp cutout on genuinely transparent background, complete antennae and wingtips with slight margin. It will be used as a small independently flapping wing sprite in a photo-real cinematic website. No shadows, no text, no other objects.
+
+灰绿尖翅素材提示词
+
+> One isolated photorealistic pale sage-jade butterfly with elongated gently pointed forewings and soft leaf green panels, smoky dark fine veins, thin charcoal edging and a few pale small spots near the wing edge. Top down dorsal orthographic view, body EXACTLY centered on vertical centerline, head upwards, wings spread fully open symmetrically. Entire insect visible with small transparent margin on a genuine fully transparent background. One tiny animated web sprite, no backdrop, shadow, text or other objects.
+
+玫瑰棕波纹翅素材提示词
+
+> One single isolated photorealistic butterfly with muted dusty rose and lilac bands on smoky dark rounded forewings and scalloped hindwings with subtle deep burgundy eyespots. Dorsal top-down orthographic view, head straight up, body perfectly vertical and centered, both wings fully open flat to left and right symmetrically. Genuine transparent background and slight transparent margin around wings and antennae. Photographic small animated web sprite, natural texture, no shadow, glow, border, or text.
