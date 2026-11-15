@@ -68,12 +68,13 @@
 
   .is-interactive .blog-landing::before {
     opacity: var(--paper-opacity, 0);
-    mask-image: radial-gradient(ellipse 100% 115% at 72% 64%,
-      #000 calc(var(--paper-spread, 18%) - 42%), transparent var(--paper-spread, 18%));
+    mask-image: radial-gradient(ellipse 100% 115% at var(--paper-x, 87%) var(--paper-y, 79%),
+      #000 calc(var(--paper-spread, 14%) - 46%), transparent var(--paper-spread, 14%));
   }
 
   .is-interactive .blog-landing > * {
     opacity: var(--landing-opacity, 0);
+    transform: translateY(var(--landing-offset, 16px));
   }
 
   .is-interactive .butterfly-flight.is-flying {
