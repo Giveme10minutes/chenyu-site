@@ -1,12 +1,4 @@
-// Waypoints are percentages of the viewport, from right of frame to upper left.
-const flightPaths = [
-  { start: 1.78, end: 2.91, origin: [109, 108], bend: [86, 27], exit: [-15, 8], size: 0.65 },
-  { start: 1.91, end: 3.02, origin: [114, 103], bend: [71, 74], exit: [-17, -12], size: 1.16 },
-  { start: 2.08, end: 3.17, origin: [115, 112], bend: [49, 58], exit: [4, -13], size: 0.81 },
-  { start: 1.96, end: 3.02, origin: [105, 110], bend: [63, 47], exit: [-16, 33], size: 0.46 },
-  { start: 2.16, end: 3.16, origin: [111, 108], bend: [94, 37], exit: [-12, 13], size: 0.58 },
-  { start: 2.04, end: 3.14, origin: [113, 115], bend: [35, 88], exit: [-15, 49], size: 0.86 },
-];
+import { butterflyPaths } from "./butterflyPaths.js";
 
 export function attachScrollScenes(scene) {
   const stage = scene.querySelector(".stage");
@@ -73,10 +65,12 @@ export function attachScrollScenes(scene) {
     landing.style.setProperty("--landing-opacity", content);
     landing.inert = content === 0;
     portrait.inert = scroll >= 2.60;
-    flight.classList.toggle("is-flying", scroll > 1.78 && scroll < 3.17);
+    const isFlying = scroll > 1.78 && scroll < 3.17;
+    flight.classList.toggle("is-flying", isFlying);
+    if (!isFlying) return;
 
     butterflies.forEach((butterfly, index) => {
-      const { start, end, origin, bend, exit, size } = flightPaths[index];
+      const { start, end, origin, bend, exit, size } = butterflyPaths[index];
       const progress = between(scroll, start, end);
       const remaining = 1 - progress;
       const point = origin.map((value, axis) => (

@@ -1,10 +1,11 @@
 import React from "react";
+import { butterflyPaths } from "./butterflyPaths.js";
 
 export default function ButterflyTransition() {
   return (
     <div className="butterfly-flight" aria-hidden="true">
-      {Array.from({ length: 6 }, (_, index) => (
-        <div className="butterfly" key={index}>
+      {butterflyPaths.map(({ sprite, start }) => (
+        <div className={`butterfly butterfly-${sprite}`} key={start}>
           <span className="butterfly-wing butterfly-wing-left" />
           <span className="butterfly-wing butterfly-wing-right" />
           <span className="butterfly-body" />
