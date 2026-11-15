@@ -155,7 +155,8 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .scene.is-interactive {
-    min-height: 417svh;
+    /* Release the stage just after the automatic ending takes over. */
+    min-height: 368svh;
   }
 
   .is-interactive .stage {
