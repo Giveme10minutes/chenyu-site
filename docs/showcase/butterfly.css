@@ -179,7 +179,7 @@
       padding-top: 9px;
     }
 
-    .butterfly:nth-child(n + 9) {
+    .butterfly:nth-child(n + 15) {
       display: none;
     }
   }

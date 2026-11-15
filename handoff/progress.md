@@ -54,3 +54,8 @@
 - 两种新素材由内置图片生成工具生成并保留透明背景，存于 `docs/showcase/butterfly-ivory.webp` 与 `docs/showcase/butterfly-swallowtail.webp`。Chrome 验证 1440、390、320 像素宽下的蝶群数量、大小、三款素材加载、肖像显现、落点与回滚，减少动态效果和无 JavaScript 的页面也通过复查。
 - 象牙白提示词：One isolated photorealistic ivory-white butterfly with distinct rounded forewings, subtle parchment cream near the body and charcoal tips, real insect scales and soft thin veins, flat top-down dorsal orthographic view on a genuinely transparent background. Single clean cutout for a tiny animated sprite. Body straight up and exactly centered on the vertical midline, front and back wings fully opened symmetrically on both sides, antennae and all wing tips completely inside frame with slight padding. No shadow, no glow, no backdrop, no text, no other objects.
 - 凤蝶提示词：One isolated realistic small swallowtail butterfly cutout, dark charcoal and muted smoky lavender blue coloring, narrow swept angular forewings, two short distinctive hindwing tails with a subtle warm copper eye spot, dorsal top-down orthographic view, symmetrical fully open wings, body vertically centered with head straight up. Genuine transparent background for a tiny animated sprite, slight padding outside wing tips and antennae, evenly lit delicate natural markings. Exactly one butterfly, no shadows, scenery, text, or border.
+
+## 蝶群全屏分布 · 2026-11-15
+
+- 蝶群从右下角飞入后沿高低不同的路线铺开。部分蝴蝶沿右侧上升，部分横穿画面后从左侧和顶部散去。桌面二十六只，手机十四只，单只尺寸和三种翅形沿用上一版。
+- 构建通过。Chrome 在 1440、390 和 320 像素宽下验证转场中段的蝶群分布，屏幕按上中下与左中右划分的九个区域均有蝴蝶。复查肖像显现、回滚、博客落点及减少动态效果。

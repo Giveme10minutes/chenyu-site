@@ -1,4 +1,4 @@
-// Coordinates are viewport percentages. The first eight paths also appear on phones.
+// Coordinates are viewport percentages. The first fourteen paths also appear on phones.
 export const butterflyPaths = [
   { sprite: "blue", start: 1.78, end: 2.91, origin: [109, 106], bend: [86, 27], exit: [-12, 8], size: .73 },
   { sprite: "ivory", start: 1.91, end: 3.02, origin: [114, 102], bend: [72, 68], exit: [-12, -12], size: .94 },
@@ -8,10 +8,22 @@ export const butterflyPaths = [
   { sprite: "swallowtail", start: 1.99, end: 3.06, origin: [108, 105], bend: [54, 80], exit: [-12, 53], size: .68 },
   { sprite: "ivory", start: 2.05, end: 3.05, origin: [110, 107], bend: [96, 42], exit: [20, -9], size: .47 },
   { sprite: "blue", start: 2.13, end: 3.13, origin: [116, 110], bend: [72, 86], exit: [-9, 21], size: .62 },
+  { sprite: "blue", start: 1.79, end: 2.78, origin: [107, 104], bend: [24, 12], exit: [-13, -12], size: .61 },
+  { sprite: "ivory", start: 1.83, end: 2.90, origin: [108, 105], bend: [65, -6], exit: [44, -10], size: .47 },
+  { sprite: "swallowtail", start: 1.85, end: 2.92, origin: [110, 104], bend: [95, 4], exit: [75, -12], size: .57 },
+  { sprite: "ivory", start: 1.89, end: 2.88, origin: [105, 109], bend: [14, 99], exit: [-12, 65], size: .57 },
+  { sprite: "blue", start: 1.92, end: 2.95, origin: [109, 106], bend: [8, 47], exit: [-10, 12], size: .49 },
+  { sprite: "swallowtail", start: 2.14, end: 3.17, origin: [112, 110], bend: [72, 86], exit: [99, -11], size: .51 },
   { sprite: "swallowtail", start: 1.86, end: 2.85, origin: [105, 112], bend: [79, 45], exit: [-11, 32], size: .53 },
   { sprite: "ivory", start: 1.94, end: 2.94, origin: [108, 106], bend: [39, 56], exit: [-11, 28], size: .59 },
   { sprite: "blue", start: 2.03, end: 3.07, origin: [112, 114], bend: [94, 65], exit: [8, -11], size: .49 },
   { sprite: "ivory", start: 2.06, end: 3.14, origin: [109, 115], bend: [52, 92], exit: [-8, 56], size: .52 },
   { sprite: "swallowtail", start: 2.12, end: 3.16, origin: [115, 108], bend: [82, 32], exit: [1, -11], size: .62 },
   { sprite: "blue", start: 2.17, end: 3.15, origin: [113, 111], bend: [34, 84], exit: [-9, 42], size: .54 },
+  { sprite: "ivory", start: 1.80, end: 2.80, origin: [108, 105], bend: [17, 31], exit: [-11, -11], size: .46 },
+  { sprite: "swallowtail", start: 1.84, end: 2.87, origin: [112, 108], bend: [53, 3], exit: [26, -12], size: .54 },
+  { sprite: "blue", start: 1.87, end: 2.96, origin: [110, 106], bend: [83, 20], exit: [94, -11], size: .50 },
+  { sprite: "swallowtail", start: 1.90, end: 2.89, origin: [108, 107], bend: [4, 82], exit: [-11, 77], size: .43 },
+  { sprite: "ivory", start: 1.93, end: 2.92, origin: [108, 102], bend: [17, 59], exit: [-12, 14], size: .52 },
+  { sprite: "blue", start: 2.01, end: 3.09, origin: [109, 110], bend: [29, 102], exit: [-13, 68], size: .52 },
 ];
