@@ -192,7 +192,7 @@
       padding-top: 9px;
     }
 
-    .butterfly:nth-child(n + 37) {
+    .butterfly:nth-child(n + 41) {
       display: none;
     }
   }

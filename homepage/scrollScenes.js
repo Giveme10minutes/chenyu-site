@@ -1,7 +1,7 @@
 import { butterflyPaths } from "./butterflyPaths.js";
 
 const transitionStart = 1.78;
-const transitionEnd = 3.17;
+const transitionEnd = Math.max(...butterflyPaths.map(({ end }) => end));
 
 export function attachScrollScenes(scene) {
   const stage = scene.querySelector(".stage");

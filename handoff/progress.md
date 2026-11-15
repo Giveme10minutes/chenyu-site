@@ -82,3 +82,8 @@
 玫瑰棕波纹翅素材提示词
 
 > One single isolated photorealistic butterfly with muted dusty rose and lilac bands on smoky dark rounded forewings and scalloped hindwings with subtle deep burgundy eyespots. Dorsal top-down orthographic view, head straight up, body perfectly vertical and centered, both wings fully open flat to left and right symmetrically. Genuine transparent background and slight transparent margin around wings and antennae. Photographic small animated web sprite, natural texture, no shadow, glow, border, or text.
+
+### 延长尾蝶路线并加密中段
+
+- 为中段增加八条桌面路线，其中四条也在手机上显示。拉长六只尾蝶的路线，让书架完整露出后仍有少数蝴蝶朝左侧和上方飞离。手动转场的末段增加约五分之一屏的滚动距离。
+- 构建通过。在桌面和两种手机宽度复查起落密度、全屏分布、尾蝶延长后的可见性、停滚、回滚及减少动态效果。

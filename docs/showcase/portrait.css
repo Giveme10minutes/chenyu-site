@@ -155,7 +155,7 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .scene.is-interactive {
-    min-height: 417svh;
+    min-height: 437svh;
   }
 
   .is-interactive .stage {
