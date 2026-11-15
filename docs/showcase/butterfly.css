@@ -87,7 +87,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: clamp(49px, 8vw, 116px);
+    width: clamp(56px, 9.2vw, 133px);
     aspect-ratio: 1;
     transform: translate(var(--flight-x), var(--flight-y)) translate(-50%, -50%)
       rotate(var(--flight-angle)) scale(var(--flight-size));
