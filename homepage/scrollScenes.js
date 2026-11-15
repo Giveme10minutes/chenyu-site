@@ -1,11 +1,21 @@
+// Waypoints are percentages of the viewport, from right of frame to upper left.
+const flightPaths = [
+  { start: 1.78, end: 2.91, origin: [109, 108], bend: [86, 27], exit: [-15, 8], size: 0.65 },
+  { start: 1.91, end: 3.02, origin: [114, 103], bend: [71, 74], exit: [-17, -12], size: 1.16 },
+  { start: 2.08, end: 3.17, origin: [115, 112], bend: [49, 58], exit: [4, -13], size: 0.81 },
+  { start: 1.96, end: 3.02, origin: [105, 110], bend: [63, 47], exit: [-16, 33], size: 0.46 },
+  { start: 2.16, end: 3.16, origin: [111, 108], bend: [94, 37], exit: [-12, 13], size: 0.58 },
+  { start: 2.04, end: 3.14, origin: [113, 115], bend: [35, 88], exit: [-15, 49], size: 0.86 },
+];
+
 export function attachScrollScenes(scene) {
   const stage = scene.querySelector(".stage");
   const cue = scene.querySelector(".scroll-cue");
-  const award = scene.querySelector(".award-frame");
-  const agent = scene.querySelector(".agent-frame");
-  const forum = scene.querySelector(".forum-frame");
-  const flowSteps = [...forum.querySelectorAll(".view-flow li")];
-  const immersiveLayout = matchMedia("(min-width: 761px) and (prefers-reduced-motion: no-preference)");
+  const flight = scene.querySelector(".butterfly-flight");
+  const butterflies = [...flight.querySelectorAll(".butterfly")];
+  const landing = scene.querySelector(".blog-landing");
+  const portrait = scene.querySelector(".portrait-frame");
+  const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
 
   let frame = 0;
 
@@ -23,7 +33,9 @@ export function attachScrollScenes(scene) {
 
   function render() {
     frame = 0;
-    const scroll = -scene.getBoundingClientRect().top / stage.offsetHeight;
+    const { top } = scene.getBoundingClientRect();
+    const { width, height } = stage.getBoundingClientRect();
+    const scroll = -top / height;
     const progress = clamp(scroll / 1.76);
     const rise = between(progress, 0, 0.43);
     const reveal = between(progress, 0.028, 0.448);
@@ -49,54 +61,37 @@ export function attachScrollScenes(scene) {
     scene.style.setProperty("--cue-rise", 1 - (1 - cueFade) ** 1.7);
     scene.style.setProperty("--cue-scale", cueScale);
     cue.classList.toggle("is-hidden", cueFade === 1);
-    scene.style.setProperty("--intro-scene-opacity", 1 - ease(between(scroll, 1.77, 2.13)));
-    renderAward(scroll);
-    renderProjects(scroll);
+    scene.style.setProperty("--intro-scene-opacity", 1 - ease(between(scroll, 1.94, 2.60)));
+    renderTransition(scroll, width / height);
   }
 
-  function renderAward(scroll) {
-    const walk = ease(between(scroll, 2.08, 3.02));
-    const eye = ease(between(walk, 0.06, 0.24));
-    const light = ease(between(walk, 0.44, 0.91));
-    const copy = ease(between(scroll, 3.04, 3.32));
-    const exit = ease(between(scroll, 3.68, 4.25));
-    const step = Math.sin((walk + exit) * Math.PI * 4);
-    const stride = step * 23;
+  function renderTransition(scroll, aspectRatio) {
+    const paper = ease(between(scroll, 2.09, 2.9));
+    const content = ease(between(scroll, 2.52, 3.06));
+    landing.style.setProperty("--paper-opacity", paper);
+    landing.style.setProperty("--paper-spread", `${18 + 130 * paper}%`);
+    landing.style.setProperty("--landing-opacity", content);
+    landing.inert = content === 0;
+    portrait.inert = scroll >= 2.60;
+    flight.classList.toggle("is-flying", scroll > 1.78 && scroll < 3.17);
 
-    award.style.setProperty("--award-scene-opacity", ease(between(scroll, 2.02, 2.32)) * (1 - exit));
-    award.style.setProperty("--robot-position", `${113 - 78 * walk - 47 * exit}%`);
-    award.style.setProperty("--robot-light", light);
-    award.style.setProperty("--eye-light", eye);
-    award.style.setProperty("--stride", `${stride}deg`);
-    award.style.setProperty("--bob", `${-Math.abs(step) * 4}px`);
-    award.style.setProperty("--award-copy-opacity", copy);
-    award.style.setProperty("--award-copy-offset", `${12 * (1 - copy)}px`);
-    award.inert = copy < 0.95 || exit > 0.25;
-  }
+    butterflies.forEach((butterfly, index) => {
+      const { start, end, origin, bend, exit, size } = flightPaths[index];
+      const progress = between(scroll, start, end);
+      const remaining = 1 - progress;
+      const point = origin.map((value, axis) => (
+        remaining ** 2 * value + 2 * remaining * progress * bend[axis] + progress ** 2 * exit[axis]
+      ));
+      const [dx, dy] = origin.map((value, axis) => (
+        remaining * (bend[axis] - value) + progress * (exit[axis] - bend[axis])
+      ));
 
-  function renderProjects(scroll) {
-    const screen = ease(between(scroll, 4.08, 4.52));
-    const agentExit = ease(between(scroll, 5.04, 5.38));
-    const agentCopy = ease(between(scroll, 4.34, 4.69));
-    const forumLight = ease(between(scroll, 5.32, 5.57));
-    const forumCopy = ease(between(scroll, 5.71, 6.02));
-
-    renderProject(agent, screen * (1 - agentExit), agentCopy, .955 + .045 * screen);
-    renderProject(forum, forumLight, forumCopy, .98 + .02 * forumLight);
-
-    flowSteps.forEach((step, index) => {
-      const start = 5.45 + index * 0.17;
-      const light = ease(between(scroll, start, start + 0.20));
-      step.style.setProperty("--step-light", 0.16 + 0.84 * light);
+      butterfly.style.setProperty("--flight-x", `${point[0]}vw`);
+      butterfly.style.setProperty("--flight-y", `${point[1]}svh`);
+      butterfly.style.setProperty("--flight-angle", `${Math.atan2(dx * aspectRatio, -dy)}rad`);
+      butterfly.style.setProperty("--flight-size", size * (0.74 + 0.36 * Math.sin(Math.PI * progress)));
+      butterfly.style.opacity = ease(between(progress, 0, 0.12)) * (1 - ease(between(progress, 0.84, 1)));
     });
-  }
-
-  function renderProject(project, light, copy, scale) {
-    project.style.setProperty("--project-light", light);
-    project.style.setProperty("--copy-light", copy);
-    project.style.setProperty("--copy-offset", `${12 * (1 - copy)}px`);
-    project.style.setProperty("--visual-scale", scale);
-    project.inert = light < 0.85 || copy < 0.95;
   }
 
   function scheduleRender() {
@@ -110,10 +105,9 @@ export function attachScrollScenes(scene) {
     if (!immersiveLayout.matches) {
       cancelAnimationFrame(frame);
       frame = 0;
-      award.inert = false;
-      agent.inert = false;
-      forum.inert = false;
-      flowSteps.forEach(step => step.style.removeProperty("--step-light"));
+      landing.inert = false;
+      portrait.inert = false;
+      flight.classList.remove("is-flying");
     }
     scheduleRender();
   }

@@ -40,3 +40,10 @@
 
 - 已整理[个人博客改版计划](blog-redesign-plan.md)，涵盖首访肖像、蝴蝶转场、生活与项目书架、卡片详情，以及各阶段的验收条件。当前是设计阶段，页面实现尚未开始。
 - 用户确认保留下滑时肖像慢慢升起和亮起的现有动画。已将肖像完整亮相后再进入蝴蝶转场写入分镜与验收条件。
+
+## 蝴蝶转场第一版 · 2026-11-15
+
+- 在 `codex/blog-redesign` 分支实现首访开场的过渡。肖像沿用原来的升起、聚光和介绍节奏。继续下滑时，蝶群从右下方飞入，暖色纸面随之展开。转场和博客预览在同一页。
+- 桌面展示六只蝴蝶，手机展示三只。飞行位置跟随滚动，可回退。左右翅膀独立扇动，素材为内置图片生成工具产出的透明图，压缩后保存在 `docs/showcase/butterfly-blue.webp`。落点暂用「生活记录」与「做过的项目」两张静态预览封面。
+- 构建通过。用 Chrome 验证 1440、390 和 320 像素宽布局的肖像显现、蝶群飞行、落点、回滚和滚动提示点击。验证减少动态效果和关闭 JavaScript 时可直接阅读介绍与博客预览。保留本地预览供评审。
+- 图片生成提示词：One isolated realistic dusty pale steel-blue butterfly, dorsal top-down orthographic view, head straight up, body exactly vertical, both wings fully open flat symmetrical left and right, on genuine transparent background. This is a cutout sprite for independent wing flapping in a cinematic web animation. Finely detailed veins, slate-blue outer edges, slightly luminous silvery blue inner wing, natural velvety scales, ethereal but photographic, no glow. Centered, fully visible with small transparent margin around wing tips and antennae. Exactly one butterfly, no shadow, no text, no other objects.
