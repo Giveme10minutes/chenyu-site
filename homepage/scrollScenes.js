@@ -66,18 +66,20 @@ export function attachScrollScenes(scene, finish) {
     cue.classList.toggle("is-hidden", cueFade === 1);
     // Allow the last pixel of travel to round down on fractional viewport sizes.
     const target = Math.max(transitionStart, Math.min(transitionEnd, scroll - butterflyOffset + 1 / height));
+    const previousScroll = transitionScroll ?? target;
+    const elapsed = Math.max(1, now - (previousFrameTime ?? now - 16.7));
     if (transitionScroll === undefined || Math.abs(target - transitionScroll) < 0.005) {
       transitionScroll = target;
       previousFrameTime = undefined;
     } else {
       // Ease wheel steps into motion without adding lag to the portrait reveal.
-      const elapsed = Math.min(32, now - (previousFrameTime ?? now - 16.7));
-      transitionScroll += (target - transitionScroll) * (1 - Math.exp(-elapsed / 52));
+      transitionScroll += (target - transitionScroll) * (1 - Math.exp(-Math.min(elapsed, 32) / 30));
       previousFrameTime = now;
       scheduleRender();
     }
 
-    renderTransition(transitionScroll, width / height);
+    const flightSpeed = (transitionScroll - previousScroll) * 1000 / elapsed;
+    renderTransition(transitionScroll, width / height, flightSpeed);
     if (transitionScroll === transitionEnd) finish();
   }
 
@@ -97,10 +99,10 @@ export function attachScrollScenes(scene, finish) {
     shot.style.setProperty("--caption-opacity", ease(between(scroll, 0.36, 0.61)));
   }
 
-  function renderTransition(scroll, aspectRatio) {
+  function renderTransition(scroll, aspectRatio, flightSpeed) {
     const portraitExit = ease(between(scroll, 1.98, 2.67));
     const paper = ease(between(scroll, 2.04, 2.94));
-    const content = ease(between(scroll, 2.49, 3.04));
+    const content = ease(between(scroll, 2.49, transitionEnd));
     scene.style.setProperty("--intro-scene-opacity", 1 - portraitExit);
     landing.style.setProperty("--paper-opacity", ease(between(scroll, 2.02, 2.68)));
     landing.style.setProperty("--paper-spread", `${14 + 134 * paper}%`);
@@ -115,11 +117,15 @@ export function attachScrollScenes(scene, finish) {
     if (!isFlying) return;
 
     butterflies.forEach((butterfly, index) => {
-      const { start, end, origin, bend, exit, size } = butterflyPaths[index];
+      const { start, end, origin, bend, exit, size, foreground } = butterflyPaths[index];
       const progress = between(scroll, start, end);
       if (progress === 0 || progress === 1) {
         butterfly.style.opacity = 0;
         return;
+      }
+      if (foreground) {
+        const smear = ease(between(flightSpeed, 0.45, 2.7)) * (1 - ease(between(progress, 0.30, 0.62)));
+        butterfly.style.setProperty("--motion-smear", smear);
       }
       const remaining = 1 - progress;
       const point = origin.map((value, axis) => (

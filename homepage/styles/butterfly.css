@@ -64,7 +64,8 @@
   .butterfly:nth-child(2n) {
     --flap-duration: .64s;
     --flap-delay: -.39s;
-    filter: brightness(1.14);
+    --flight-brightness: 1.14;
+    filter: brightness(var(--flight-brightness));
   }
 
   .butterfly:nth-child(3n) {
@@ -90,6 +91,20 @@
 
   .butterfly-rose {
     --sprite: url("butterfly-rose.webp");
+  }
+
+  .butterfly-foreground {
+    filter: brightness(var(--flight-brightness, 1)) blur(calc(1px * var(--motion-smear, 0)));
+  }
+
+  .butterfly-foreground::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: center / contain no-repeat var(--sprite);
+    opacity: calc(.28 * var(--motion-smear, 0));
+    filter: blur(2px);
+    transform: scaleY(calc(1 + .26 * var(--motion-smear, 0)));
   }
 
   .butterfly-wing,
