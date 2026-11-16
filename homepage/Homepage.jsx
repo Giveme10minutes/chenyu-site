@@ -65,7 +65,7 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
   }
 
   return (
-    <main ref={scene} className="scene" aria-label={route === "intro" ? "陈煜的自我介绍" : "陈煜的个人博客"}>
+    <main ref={scene} className="scene" tabIndex={-1} aria-label={route === "intro" ? "陈煜的自我介绍" : "陈煜的个人博客"}>
       <div className="stage">
         {route === "intro" && <PortraitScene assets={assetPath} />}
         <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
@@ -73,12 +73,11 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
           onShelf={(event) => follow(event, "shelf")} />
         {route === "intro" && <>
           <a className="shelf-continue blog-action blog-glass" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 <span aria-hidden="true">→</span></a>
-          <a className="scroll-cue" href="#portrait-revealed" aria-label="向下滚动，点亮肖像">
+          <button className="scroll-cue" type="button" aria-label="向下滚动，点亮肖像">
             <span className="scroll-arrow" aria-hidden="true" />
-          </a>
+          </button>
         </>}
       </div>
-      {route === "intro" && <div id="portrait-revealed" />}
     </main>
   );
 }

@@ -20,7 +20,7 @@ export default function ArticlePage({ category, entry, body, version }) {
       <body>
         <BlogNav shelfHref="../../../" introHref="../../../intro/" />
         <main className="reading-page">
-          <a className="blog-action blog-glass" href={back}><span aria-hidden="true">←</span> 返回书架</a>
+          <a className="reading-back blog-action blog-glass" href={back}><span aria-hidden="true">←</span> 返回书架</a>
           <article>
             <header className="reading-header">
               <p className="reading-meta">

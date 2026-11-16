@@ -1,117 +1,190 @@
-const posterExitStart = 5.15;
-const posterExitEnd = 6.05;
+import { bindIntroGestures } from "./introGestures.js";
+
+const shotDurations = [820, 760, 760, 860];
+const handoffDuration = 390;
+const posterTravel = 0.9;
 
 export function attachScrollScenes(scene, finish) {
   const stage = scene.querySelector(".stage");
   const cue = scene.querySelector(".scroll-cue");
   const landing = scene.querySelector(".blog-landing");
-  const portrait = scene.querySelector(".portrait-frame");
-  const [opening, invite, call, team] = portrait.querySelectorAll(".portrait-shot");
+  const shots = [...scene.querySelectorAll(".portrait-shot")];
+  const layers = shots.map(() => ({ opacity: 0, offset: 0, progress: 0 }));
   const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
-
-  scene.style.setProperty("--intro-screens", 1 + posterExitEnd);
-
-  let frame = 0;
-
-  function clamp(value) {
-    return Math.max(0, Math.min(1, value));
-  }
+  let active = -1;
+  let playback = 0;
+  let scrollFrame = 0;
+  const atPoster = () => active === shots.length - 1;
 
   function between(progress, start, end) {
-    return clamp((progress - start) / (end - start));
+    return Math.max(0, Math.min(1, (progress - start) / (end - start)));
   }
 
   function ease(progress) {
     return progress * progress * (3 - 2 * progress);
   }
 
-  function render() {
-    frame = 0;
-    const { top } = scene.getBoundingClientRect();
-    const { height } = stage.getBoundingClientRect();
-    const scroll = -top / height;
-    const progress = clamp(scroll / 1.76);
-    const rise = between(progress, 0, 0.43);
-    const reveal = between(progress, 0.028, 0.448);
-    const brightness = clamp(reveal / 0.25);
-    const spread = reveal ** 1.72;
-    const cueZoom = between(progress, 0, 0.14);
-    const cueFade = between(progress, 0, 0.40);
-    const cueScale = 1 + 0.55 * (1 - (1 - cueZoom) ** 2);
-
-    scene.style.setProperty("--portrait-opacity", brightness);
-    opening.style.setProperty("--greeting-opacity", ease(between(progress, 0.10, 0.32)));
-    opening.style.setProperty("--name-opacity", ease(between(progress, 0.20, 0.40)));
+  function renderOpening(shot, progress) {
+    const light = between(progress, 0, 0.83);
+    const spread = light ** 1.72;
+    scene.style.setProperty("--portrait-opacity", between(light, 0, 0.32));
     scene.style.setProperty("--light-width", `${16 + 162 * spread}%`);
     scene.style.setProperty("--light-height", `${8 + 174 * spread}%`);
-    scene.style.setProperty("--portrait-scale", 1 + 0.035 * reveal);
-    scene.style.setProperty("--portrait-rise", (1 - rise) ** 3);
-    renderShot(opening, 1 - ease(between(scroll, 1.21, 1.54)));
-    renderEntrance(invite, scroll - 1.47, 1.34, -1);
-    renderEntrance(call, scroll - 2.77, 1.31, 1);
+    scene.style.setProperty("--portrait-scale", 1 + 0.035 * light);
+    scene.style.setProperty("--portrait-rise", (1 - between(progress, 0, 0.87)) ** 3);
+    shot.style.setProperty("--greeting-opacity", ease(between(progress, 0.26, 0.75)));
+    shot.style.setProperty("--name-opacity", ease(between(progress, 0.50, 1)));
+  }
 
-    const teamLight = ease(between(scroll, 4.08, 4.66));
-    renderShot(team, ease(between(scroll, 4.07, 4.37)), teamLight);
-    team.style.setProperty("--team-scale", 1.12 - 0.12 * teamLight);
-    team.style.setProperty("--team-caption", ease(between(scroll, 4.50, 4.84)));
-    scene.style.setProperty("--cue-opacity", 1 - cueFade);
-    scene.style.setProperty("--cue-rise", 1 - (1 - cueFade) ** 1.7);
-    scene.style.setProperty("--cue-scale", cueScale);
-    cue.classList.toggle("is-hidden", cueFade === 1);
-    // Allow the last pixel of travel to round down on fractional viewport sizes.
-    const exit = between(scroll + 1 / height, posterExitStart, posterExitEnd);
-    const revealShelf = ease(exit);
+  function renderEntrance(shot, progress, direction) {
+    const light = ease(between(progress, 0, 0.72));
+    const turn = ease(between(progress, 0.22, 0.93));
+    shot.style.setProperty("--shot-light", light);
+    shot.style.setProperty("--turn", `${direction * 30 * (1 - turn)}deg`);
+    shot.style.setProperty("--actor-shift", `${direction * 7 * (1 - turn)}%`);
+    shot.style.setProperty("--caption-opacity", ease(between(progress, 0.47, 0.89)));
+  }
+
+  function renderTeam(shot, progress) {
+    const light = ease(between(progress, 0, 0.77));
+    shot.style.setProperty("--shot-light", light);
+    shot.style.setProperty("--team-scale", 1.12 - 0.12 * light);
+    shot.style.setProperty("--team-caption", ease(between(progress, 0.54, 1)));
+  }
+
+  const renderShots = [
+    renderOpening,
+    (shot, progress) => renderEntrance(shot, progress, -1),
+    (shot, progress) => renderEntrance(shot, progress, 1),
+    renderTeam,
+  ];
+
+  function renderLayer(index, opacity, offset) {
+    const layer = layers[index];
+    layer.opacity = opacity;
+    layer.offset = offset;
+    shots[index].style.setProperty("--shot-opacity", opacity);
+    shots[index].style.setProperty("--shot-offset", `${offset}px`);
+  }
+
+  function settleLayers() {
+    shots.forEach((_, index) => renderLayer(index, index === active ? 1 : 0, 0));
+  }
+
+  function show(index) {
+    cancelAnimationFrame(playback);
+    playback = 0;
+    const direction = Math.sign(index - active);
+    const fromBlack = active === -1 && layers.every(layer => layer.opacity === 0);
+    const previous = layers.map(layer => ({ ...layer }));
+    active = index;
+    shots.forEach((shot, position) => {
+      shot.inert = position !== index;
+    });
+    scene.classList.toggle("is-poster-ready", atPoster());
+    scene.style.setProperty("--intro-screens", atPoster() ? 1 + posterTravel : 1);
+    cue.classList.toggle("is-hidden", index >= 0);
+    if (index < 0 && fromBlack) return;
+
+    const started = performance.now();
+    const startProgress = previous[index]?.opacity ? previous[index].progress : 0;
+    const duration = Math.max(handoffDuration, (shotDurations[index] ?? 0) * (1 - startProgress));
+    const render = renderShots[index];
+    render?.(shots[index], startProgress);
+
+    function play(now) {
+      const elapsed = Math.max(0, now - started);
+      const progress = between(elapsed, 0, duration);
+      const arriving = fromBlack ? 1 : ease(between(elapsed, 0, 300));
+      const leaving = ease(between(elapsed, 65, handoffDuration));
+      previous.forEach(({ opacity, offset }, position) => {
+        if (position === index) {
+          const start = opacity || fromBlack ? offset : direction * 12;
+          renderLayer(position, opacity + (1 - opacity) * arriving, start * (1 - arriving));
+        } else if (opacity) {
+          renderLayer(position, opacity * (1 - leaving), offset - direction * 10 * leaving);
+        }
+      });
+      // If the visitor reverses mid-transition, resume the returning scene's lighting.
+      if (render) {
+        const shotProgress = startProgress + (1 - startProgress) * progress;
+        layers[index].progress = shotProgress;
+        render(shots[index], shotProgress);
+      }
+      if (progress === 1) settleLayers();
+      playback = progress < 1 ? requestAnimationFrame(play) : 0;
+    }
+    playback = requestAnimationFrame(play);
+  }
+
+  function step(direction) {
+    const next = active + direction;
+    if (next >= -1 && next < shots.length) show(next);
+  }
+
+  function renderPosterExit() {
+    scrollFrame = 0;
+    const offset = atPoster() ? Math.max(0, -scene.getBoundingClientRect().top) : 0;
+    const distance = posterTravel * stage.clientHeight;
+    const exit = offset > 0 ? between(offset + 1, 0, distance) : 0;
+    if (exit > 0 && playback) {
+      cancelAnimationFrame(playback);
+      playback = 0;
+      layers[active].progress = 1;
+      renderTeam(shots[active], 1);
+      settleLayers();
+    }
+
+    const reveal = ease(exit);
     scene.style.setProperty("--poster-offset", `${-100 * exit}%`);
-    scene.style.setProperty("--poster-scale", 1 - 0.045 * revealShelf);
-    scene.style.setProperty("--poster-shadow", 0.24 * (1 - revealShelf));
-    scene.style.setProperty("--shelf-rise", `${24 * (1 - revealShelf)}px`);
+    scene.style.setProperty("--poster-scale", 1 - 0.045 * reveal);
+    scene.style.setProperty("--poster-shadow", 0.24 * (1 - reveal));
+    scene.style.setProperty("--shelf-rise", `${24 * (1 - reveal)}px`);
     if (exit === 1) finish();
   }
 
-  function renderShot(shot, opacity, light = 1) {
-    shot.style.setProperty("--shot-opacity", opacity);
-    shot.style.setProperty("--shot-light", light);
-    shot.inert = opacity === 0;
-  }
-
-  function renderEntrance(shot, scroll, duration, direction) {
-    const light = ease(between(scroll, 0, 0.51));
-    const turn = ease(between(scroll, 0.23, 0.70));
-    const exit = ease(between(scroll, duration - 0.25, duration));
-    renderShot(shot, ease(between(scroll, 0, 0.19)) * (1 - exit), light);
-    shot.style.setProperty("--turn", `${direction * 30 * (1 - turn)}deg`);
-    shot.style.setProperty("--actor-shift", `${direction * 7 * (1 - turn)}%`);
-    shot.style.setProperty("--caption-opacity", ease(between(scroll, 0.36, 0.61)));
-  }
-
-  function scheduleRender() {
-    if (immersiveLayout.matches && !frame) {
-      frame = requestAnimationFrame(render);
-    }
+  function scheduleExit() {
+    if (immersiveLayout.matches && !scrollFrame) scrollFrame = requestAnimationFrame(renderPosterExit);
   }
 
   function applyLayoutPreference() {
+    cancelAnimationFrame(playback);
+    cancelAnimationFrame(scrollFrame);
+    playback = scrollFrame = 0;
     scene.classList.toggle("is-interactive", immersiveLayout.matches);
     landing.inert = immersiveLayout.matches;
-    if (!immersiveLayout.matches) {
-      cancelAnimationFrame(frame);
-      frame = 0;
-      for (const shot of [opening, invite, call, team]) shot.inert = false;
+    if (immersiveLayout.matches) {
+      active = -1;
+      settleLayers();
+      show(-1);
+      window.scrollTo({ top: 0, behavior: "instant" });
+      renderPosterExit();
+    } else {
+      shots.forEach(shot => { shot.inert = false; });
     }
-    scheduleRender();
   }
 
-  addEventListener("scroll", scheduleRender, { passive: true });
-  addEventListener("resize", scheduleRender);
+  function activateCue() {
+    scene.focus({ preventScroll: true });
+    step(1);
+  }
+
+  const unbindGestures = bindIntroGestures(scene, { enabled: () => immersiveLayout.matches, atPoster, step });
+  cue.addEventListener("click", activateCue);
+  addEventListener("scroll", scheduleExit, { passive: true });
+  addEventListener("resize", scheduleExit);
   immersiveLayout.addEventListener("change", applyLayoutPreference);
   applyLayoutPreference();
 
   return () => {
-    scene.classList.remove("is-interactive");
+    scene.classList.remove("is-interactive", "is-poster-ready");
     landing.inert = false;
-    cancelAnimationFrame(frame);
-    removeEventListener("scroll", scheduleRender);
-    removeEventListener("resize", scheduleRender);
+    cancelAnimationFrame(playback);
+    cancelAnimationFrame(scrollFrame);
+    unbindGestures();
+    cue.removeEventListener("click", activateCue);
+    removeEventListener("scroll", scheduleExit);
+    removeEventListener("resize", scheduleExit);
     immersiveLayout.removeEventListener("change", applyLayoutPreference);
   };
 }
