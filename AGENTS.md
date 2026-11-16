@@ -6,6 +6,12 @@
 
 运行 `npm run build` 生成 `dist/`，用本地 HTTP 服务检查。空白测试书由 `npm run build:preview` 单独生成。核验阶段完成后记录进度并提交。
 
+## 记录改动与验证
+
+每次修复 Bug，或修改功能、交互、视觉与动效、性能、构建或部署，都要在提交前更新 `handoff/progress.md`。同一任务的多次打磨可归在一条记录下。小改动用一段话写清原问题或需求、具体改动、验证结果。复杂排查或重要功能按[改动记录模板](handoff/change-record-template.md)在 `handoff/` 写独立 Markdown，再从进度记录链接过去。
+
+给足可复查的证据，例如修改涉及的页面与文件、复现环境、对照结果、相关提交或部署链接。区分本地验证与线上验证，标明待确认的结果。适合整理简历的改动应注明用户已确认的个人贡献和 Agent 协助范围。没有实测的数据或未确认的个人贡献留待核实。
+
 ## 发布到 GitHub Pages
 
 线上个人站是 [yuchen.ink](https://yuchen.ink/)。发布仓库为 [Giveme10minutes/chenyu-site](https://github.com/Giveme10minutes/chenyu-site)，由 `main` 的 `.github/workflows/pages.yml` 构建并发布 `dist/`。`Giveme10minutes/Giveme10minutes` 是旧站仓库。
