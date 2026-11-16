@@ -110,6 +110,9 @@
 }
 
 .shelf-switch-label {
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgb(246 242 233 / 94%);
   color: #465360;
   font-size: .71rem;
   white-space: nowrap;
@@ -256,6 +259,7 @@
   position: absolute;
   inset: var(--book-top) 0 auto;
   height: var(--book-height);
+  overflow-x: clip;
   touch-action: pan-y pinch-zoom;
   user-select: none;
 }

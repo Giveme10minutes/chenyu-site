@@ -44,6 +44,13 @@ export default function BookRow({ row, active, assets }) {
 
   useEffect(() => () => cancelAnimationFrame(animation.current), []);
 
+  useEffect(() => {
+    const books = track.current;
+    if (books.contains(document.activeElement)) {
+      books.querySelector('[aria-pressed="true"]')?.focus({ preventScroll: true });
+    }
+  }, [selected]);
+
   function updatePosition(value) {
     positionRef.current = value;
     setPosition(value);
@@ -132,16 +139,19 @@ export default function BookRow({ row, active, assets }) {
         {row.entries.map((book, index) => (
           <button type="button" key={book.title} className={`shelf-book tone-${book.tone}`}
             style={bookStyles[index]} aria-label={book.title} aria-pressed={selected === index}
+            tabIndex={selected === index ? 0 : -1}
             onClick={() => select(index)}>
             <span className="book-motion" aria-hidden="true">
               <span className="book-box">
                 <span className="book-face book-cover">
-                  <span className="cover-category">{row.title}</span>
-                  {book.image ? <img src={assets + book.image} alt="" draggable="false" />
-                    : <span className="cover-mark">{book.mark}</span>}
-                  <span className="cover-title">{book.title}</span>
+                  {!book.blank && <>
+                    <span className="cover-category">{row.title}</span>
+                    {book.image ? <img src={assets + book.image} alt="" draggable="false" />
+                      : <span className="cover-mark">{book.mark}</span>}
+                    <span className="cover-title">{book.title}</span>
+                  </>}
                 </span>
-                <span className="book-face book-spine">{book.spine ?? book.title}</span>
+                <span className="book-face book-spine">{book.blank ? null : book.spine ?? book.title}</span>
                 <span className="book-face book-pages" />
               </span>
             </span>
