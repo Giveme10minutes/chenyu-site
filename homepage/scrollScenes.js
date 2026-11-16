@@ -1,6 +1,7 @@
 import { bindIntroGestures } from "./introGestures.js";
 
 const shotDurations = [820, 760, 760, 860];
+const handoffDuration = 390;
 const posterTravel = 0.9;
 
 export function attachScrollScenes(scene, finish) {
@@ -8,6 +9,7 @@ export function attachScrollScenes(scene, finish) {
   const cue = scene.querySelector(".scroll-cue");
   const landing = scene.querySelector(".blog-landing");
   const shots = [...scene.querySelectorAll(".portrait-shot")];
+  const layers = shots.map(() => ({ opacity: 0, offset: 0, progress: 0 }));
   const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
   let active = -1;
   let playback = 0;
@@ -37,7 +39,6 @@ export function attachScrollScenes(scene, finish) {
   function renderEntrance(shot, progress, direction) {
     const light = ease(between(progress, 0, 0.72));
     const turn = ease(between(progress, 0.22, 0.93));
-    shot.style.setProperty("--shot-opacity", ease(between(progress, 0, 0.23)));
     shot.style.setProperty("--shot-light", light);
     shot.style.setProperty("--turn", `${direction * 30 * (1 - turn)}deg`);
     shot.style.setProperty("--actor-shift", `${direction * 7 * (1 - turn)}%`);
@@ -46,7 +47,6 @@ export function attachScrollScenes(scene, finish) {
 
   function renderTeam(shot, progress) {
     const light = ease(between(progress, 0, 0.77));
-    shot.style.setProperty("--shot-opacity", ease(between(progress, 0, 0.39)));
     shot.style.setProperty("--shot-light", light);
     shot.style.setProperty("--team-scale", 1.12 - 0.12 * light);
     shot.style.setProperty("--team-caption", ease(between(progress, 0.54, 1)));
@@ -59,27 +59,59 @@ export function attachScrollScenes(scene, finish) {
     renderTeam,
   ];
 
+  function renderLayer(index, opacity, offset) {
+    const layer = layers[index];
+    layer.opacity = opacity;
+    layer.offset = offset;
+    shots[index].style.setProperty("--shot-opacity", opacity);
+    shots[index].style.setProperty("--shot-offset", `${offset}px`);
+  }
+
+  function settleLayers() {
+    shots.forEach((_, index) => renderLayer(index, index === active ? 1 : 0, 0));
+  }
+
   function show(index) {
     cancelAnimationFrame(playback);
     playback = 0;
+    const direction = Math.sign(index - active);
+    const fromBlack = active === -1 && layers.every(layer => layer.opacity === 0);
+    const previous = layers.map(layer => ({ ...layer }));
     active = index;
     shots.forEach((shot, position) => {
-      shot.style.setProperty("--shot-opacity", position === index ? 1 : 0);
       shot.inert = position !== index;
     });
     scene.classList.toggle("is-poster-ready", atPoster());
     scene.style.setProperty("--intro-screens", atPoster() ? 1 + posterTravel : 1);
     cue.classList.toggle("is-hidden", index >= 0);
-    if (index < 0) return;
+    if (index < 0 && fromBlack) return;
 
     const started = performance.now();
-    const duration = shotDurations[index];
+    const startProgress = previous[index]?.opacity ? previous[index].progress : 0;
+    const duration = Math.max(handoffDuration, (shotDurations[index] ?? 0) * (1 - startProgress));
     const render = renderShots[index];
-    render(shots[index], 0);
+    render?.(shots[index], startProgress);
 
     function play(now) {
-      const progress = between(now - started, 0, duration);
-      render(shots[index], progress);
+      const elapsed = Math.max(0, now - started);
+      const progress = between(elapsed, 0, duration);
+      const arriving = fromBlack ? 1 : ease(between(elapsed, 0, 300));
+      const leaving = ease(between(elapsed, 65, handoffDuration));
+      previous.forEach(({ opacity, offset }, position) => {
+        if (position === index) {
+          const start = opacity || fromBlack ? offset : direction * 12;
+          renderLayer(position, opacity + (1 - opacity) * arriving, start * (1 - arriving));
+        } else if (opacity) {
+          renderLayer(position, opacity * (1 - leaving), offset - direction * 10 * leaving);
+        }
+      });
+      // If the visitor reverses mid-transition, resume the returning scene's lighting.
+      if (render) {
+        const shotProgress = startProgress + (1 - startProgress) * progress;
+        layers[index].progress = shotProgress;
+        render(shots[index], shotProgress);
+      }
+      if (progress === 1) settleLayers();
       playback = progress < 1 ? requestAnimationFrame(play) : 0;
     }
     playback = requestAnimationFrame(play);
@@ -98,7 +130,9 @@ export function attachScrollScenes(scene, finish) {
     if (exit > 0 && playback) {
       cancelAnimationFrame(playback);
       playback = 0;
+      layers[active].progress = 1;
       renderTeam(shots[active], 1);
+      settleLayers();
     }
 
     const reveal = ease(exit);
@@ -120,6 +154,8 @@ export function attachScrollScenes(scene, finish) {
     scene.classList.toggle("is-interactive", immersiveLayout.matches);
     landing.inert = immersiveLayout.matches;
     if (immersiveLayout.matches) {
+      active = -1;
+      settleLayers();
       show(-1);
       window.scrollTo({ top: 0, behavior: "instant" });
       renderPosterExit();

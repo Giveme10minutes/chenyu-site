@@ -45,3 +45,7 @@
 
 - `000ab23` 已从 `Giveme10minutes/chenyu-site` 的 `main` 发布到 [线上介绍页](https://yuchen.ink/blog/intro/)。[Pages 部署](https://github.com/Giveme10minutes/chenyu-site/actions/runs/43838024901)成功，线上脚本版本与本地构建一致。
 - Chrome 线上验证了模拟触控板惯性和连续轻扫、反向、键盘、触屏模拟、五人合照跟手退场及书架入口。原触控板的实际手感待复测。
+
+### 补上介绍页各幕的退场 · 2026-11-16
+
+- 上一幕随换幕方向轻移并淡出，下一幕同时入场，减轻换幕时的硬切感。已验证快速切换、反向与书架交接。详见[分幕交接记录](intro-scene-playback.md#分幕入场与退场交接--2026-11-16)。
