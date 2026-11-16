@@ -72,8 +72,10 @@ export default function Bookshelf({ route, assets, introHref, onIntro }) {
       </div>
       <button type="button" className="shelf-switch" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}
         aria-controls={nextRow.id}>
-        <span aria-hidden="true">{rowIndex === 0 ? "↓" : "↑"}</span>
-        <span>{nextRow.title}</span>
+        <span className="shelf-switch-glass" aria-hidden="true">
+          <span className="shelf-switch-arrow" data-direction={rowIndex === 0 ? "down" : "up"} />
+        </span>
+        <span className="shelf-switch-label">{nextRow.title}</span>
       </button>
       <Footer />
     </section>
