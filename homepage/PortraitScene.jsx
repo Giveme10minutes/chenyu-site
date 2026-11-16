@@ -19,7 +19,7 @@ export default function PortraitScene({ assets }) {
       </section>
       <section className="portrait-shot portrait-team">
         <img className="portrait-actor" src={assets + "portrait-team.webp"} alt="五个陈煜同框，分别是跑步、做项目、正面肖像、弹吉他和拍摄时的样子" />
-        <p className="portrait-caption">专业团队，<wbr />为你服务。</p>
+        <p className="portrait-caption">专业团队 为你服务</p>
       </section>
     </div>
   );
