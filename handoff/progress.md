@@ -58,3 +58,7 @@
 
 - 合照之后的一次下滑触发约 680 毫秒的上移退场与书架入场。通过本地构建及滚轮、键盘、模拟触屏验证。详见[书架入场固定时长](intro-scene-playback.md#书架入场固定时长--2026-11-16)。
 - 将发布后默认只确认部署结果的约定同步到当前分支的 `AGENTS.md`。
+
+### 固定时长书架入场发布 · 2026-11-16
+
+- `14eb053` 已推送到 `Giveme10minutes/chenyu-site` 的 `main`，[GitHub Pages 部署](https://github.com/Giveme10minutes/chenyu-site/actions/runs/43859151887)成功。
