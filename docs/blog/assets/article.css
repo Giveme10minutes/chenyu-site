@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 
-html { background: #f6f2e9; color: #233043; }
+html { background: var(--blog-paper); color: var(--blog-ink); }
 
 body {
   margin: 0;
@@ -16,14 +16,6 @@ body {
   overflow-wrap: anywhere;
 }
 
-.reading-back {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: #3f5368;
-  font: 500 .88rem/1.4 system-ui, sans-serif;
-}
-
 .reading-header {
   margin-block: clamp(36px, 8vw, 86px) 32px;
   padding-bottom: 26px;
@@ -31,7 +23,7 @@ body {
 }
 
 .reading-meta,
-.reading-summary { color: #536172; }
+.reading-summary { color: var(--blog-muted); }
 
 .reading-meta {
   display: flex;

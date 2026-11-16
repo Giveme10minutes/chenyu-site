@@ -12,12 +12,13 @@ export default function ArticlePage({ category, entry, body, version }) {
         <title>{entry.title + " · 陈煜的博客"}</title>
         {entry.summary && <meta name="description" content={entry.summary} />}
         <link rel="icon" href={assets + "butterfly-blue.webp"} type="image/webp" />
+        <link rel="stylesheet" href={assets + "blog.css?v=" + version} />
         <link rel="stylesheet" href={assets + "article.css?v=" + version} />
         <script src={assets + "article-return.js?v=" + version} defer />
       </head>
       <body>
         <main className="reading-page">
-          <a className="reading-back" href={back}>← 返回书架</a>
+          <a className="blog-action" href={back}><span aria-hidden="true">←</span> 返回书架</a>
           <article>
             <header className="reading-header">
               <p className="reading-meta">

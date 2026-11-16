@@ -1,0 +1,18 @@
+:root {
+  --blog-paper: #f6f2e9;
+  --blog-ink: #26342f;
+  --blog-muted: #555e55;
+}
+
+.blog-action {
+  display: inline-flex;
+  align-items: center;
+  gap: .48em;
+  min-height: 44px;
+  color: var(--blog-ink);
+  font: 500 .83rem/1.4 system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.blog-action:hover { text-decoration: underline; text-underline-offset: .25em; }
+.blog-action:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
