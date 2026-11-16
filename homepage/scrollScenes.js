@@ -2,7 +2,6 @@ import { bindIntroGestures } from "./introGestures.js";
 
 const shotDurations = [820, 760, 760, 860];
 const handoffDuration = 390;
-const forwardWheelProgress = 0.88;
 
 export function attachScrollScenes(scene, finish) {
   const portrait = scene.querySelector(".portrait-frame");
@@ -14,7 +13,6 @@ export function attachScrollScenes(scene, finish) {
   let active = -1;
   let playback = 0;
   let enteringShelf = false;
-  let forwardWheelReadyAt = 0;
   const atPoster = () => active === shots.length - 1;
 
   function between(progress, start, end) {
@@ -88,7 +86,6 @@ export function attachScrollScenes(scene, finish) {
     const started = performance.now();
     const startProgress = previous[index]?.opacity ? previous[index].progress : 0;
     const duration = Math.max(handoffDuration, (shotDurations[index] ?? 0) * (1 - startProgress));
-    forwardWheelReadyAt = started + duration * forwardWheelProgress;
     const render = renderShots[index];
     render?.(shots[index], startProgress);
 
@@ -117,9 +114,8 @@ export function attachScrollScenes(scene, finish) {
     playback = requestAnimationFrame(play);
   }
 
-  function step(direction, source) {
+  function step(direction) {
     if (enteringShelf) return;
-    if (source === "wheel" && direction > 0 && active >= 0 && performance.now() < forwardWheelReadyAt) return;
     if (atPoster() && direction > 0) {
       enteringShelf = true;
       cancelAnimationFrame(playback);

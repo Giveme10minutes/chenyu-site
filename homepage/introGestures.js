@@ -39,7 +39,7 @@ export function bindIntroGestures(scene, { enabled, step }) {
     if (Math.abs(wheelTravel) >= wheelDistance) {
       steppedDirection = Math.sign(wheelTravel);
       wheelStep = timeStamp;
-      step(steppedDirection, "wheel");
+      step(steppedDirection);
     }
   }
 
