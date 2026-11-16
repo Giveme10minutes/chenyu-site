@@ -145,12 +145,22 @@ export default function BookRow({ row, active, assets }) {
         ))}
       </div>
       <div className="book-row-caption">
-        <button type="button" aria-label="上一本" disabled={selected === 0 && position === 0} onClick={() => select(target.current - 1)}>←</button>
+        <button type="button" className="book-step shelf-glass-control" aria-label="上一本"
+          disabled={selected === 0 && position === 0} onClick={() => select(target.current - 1)}>
+          <span className="shelf-glass" aria-hidden="true">
+            <span className="shelf-arrow" data-direction="left" />
+          </span>
+        </button>
         <div className="book-caption-text" aria-live="polite">
           <h2>{entry.title}</h2>
           <p>{entry.subtitle}</p>
         </div>
-        <button type="button" aria-label="下一本" disabled={selected === last && position === last} onClick={() => select(target.current + 1)}>→</button>
+        <button type="button" className="book-step shelf-glass-control" aria-label="下一本"
+          disabled={selected === last && position === last} onClick={() => select(target.current + 1)}>
+          <span className="shelf-glass" aria-hidden="true">
+            <span className="shelf-arrow" data-direction="right" />
+          </span>
+        </button>
       </div>
     </section>
   );

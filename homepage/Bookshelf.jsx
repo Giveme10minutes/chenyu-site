@@ -70,10 +70,10 @@ export default function Bookshelf({ route, assets, introHref, onIntro }) {
           <BookRow key={row.id} row={row} assets={assets} active={rowIndex === index} />
         ))}
       </div>
-      <button type="button" className="shelf-switch" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}
+      <button type="button" className="shelf-switch shelf-glass-control" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}
         aria-controls={nextRow.id}>
-        <span className="shelf-switch-glass" aria-hidden="true">
-          <span className="shelf-switch-arrow" data-direction={rowIndex === 0 ? "down" : "up"} />
+        <span className="shelf-glass" aria-hidden="true">
+          <span className="shelf-arrow" data-direction={rowIndex === 0 ? "down" : "up"} />
         </span>
         <span className="shelf-switch-label">{nextRow.title}</span>
       </button>
