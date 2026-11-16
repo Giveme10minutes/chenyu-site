@@ -1,7 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import Footer from "./Footer.jsx";
 import BookRow from "./BookRow.jsx";
-import { bookshelfRows } from "./bookshelfEntries.js";
 
 function scrollToRow(container, index) {
   container.scrollTo({
@@ -10,18 +9,29 @@ function scrollToRow(container, index) {
   });
 }
 
-export default function Bookshelf({ route, assets, introHref, onIntro }) {
-  const [rowIndex, setRowIndex] = useState(0);
+export default function Bookshelf({ route, rows, base, restoration, introHref, onIntro }) {
+  const restoredIndex = Math.max(0, rows.findIndex(row => row.id === restoration?.row));
+  const [rowIndex, setRowIndex] = useState(restoredIndex);
   const landing = useRef(null);
   const scrollport = useRef(null);
-  const nextRow = bookshelfRows[1 - rowIndex];
+  const nextRow = rows[1 - rowIndex];
 
   useLayoutEffect(() => {
     const container = scrollport.current;
-    container.scrollTo({ top: 0, behavior: "instant" });
-    setRowIndex(0);
+    const index = route === "shelf" ? restoredIndex : 0;
+    container.scrollTo({ top: index === 0 ? 0 : container.lastElementChild.offsetTop, behavior: "instant" });
+    setRowIndex(index);
     if (route === "intro") return;
 
+    function focusBook(row) {
+      document.getElementById(row)?.querySelector('.shelf-book[aria-pressed="true"]')?.focus({ preventScroll: true });
+    }
+
+    if (restoration) focusBook(restoration.row);
+    const onPageShow = (event) => {
+      if (event.persisted) focusBook(history.state?.bookshelf?.row);
+    };
+    addEventListener("pageshow", onPageShow);
     const shelf = landing.current;
     const enabledAt = performance.now();
     let lastWheel = 0;
@@ -52,22 +62,33 @@ export default function Bookshelf({ route, assets, introHref, onIntro }) {
     }
 
     shelf.addEventListener("wheel", handleWheel, { passive: false });
-    return () => shelf.removeEventListener("wheel", handleWheel);
-  }, [route]);
+    return () => {
+      shelf.removeEventListener("wheel", handleWheel);
+      removeEventListener("pageshow", onPageShow);
+    };
+  }, [route, restoredIndex, restoration]);
+
+  function rememberSelection(row) {
+    const selections = Object.fromEntries([...scrollport.current.children].map(section => [
+      section.id, section.querySelector('.shelf-book[aria-pressed="true"]')?.dataset.bookId,
+    ]));
+    history.replaceState({ ...history.state, bookshelf: { row, selections } }, "");
+  }
 
   return (
     <section ref={landing} className="blog-landing" aria-labelledby="blog-title" data-shelf-page={route === "shelf"}>
       <header className="shelf-header">
         <a className="shelf-back" href={introHref} onClick={onIntro}>← <span>自我介绍</span></a>
         <h2 id="blog-title" tabIndex="-1">陈煜的博客</h2>
-        <p>{bookshelfRows[rowIndex].title}</p>
+        <p>{rows[rowIndex].title}</p>
       </header>
       <div className="shelf-scrollport" ref={scrollport} onScroll={(event) => {
         const container = event.currentTarget;
         setRowIndex(Number(container.scrollTop >= container.lastElementChild.offsetTop / 2));
       }}>
-        {bookshelfRows.map((row, index) => (
-          <BookRow key={row.id} row={row} assets={assets} active={rowIndex === index} />
+        {rows.map((row, index) => (
+          <BookRow key={row.id} row={row} base={base} active={rowIndex === index}
+            initialBook={restoration?.selections?.[row.id]} onOpen={() => rememberSelection(row.id)} />
         ))}
       </div>
       <button type="button" className="shelf-switch shelf-glass-control" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}

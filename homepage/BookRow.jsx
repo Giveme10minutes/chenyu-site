@@ -6,6 +6,7 @@ const gap = 0.035;
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 function arrangeBooks(count, position) {
+  if (!count) return [];
   let edge = 0;
   const books = Array.from({ length: count }, (_, index) => {
     const distance = clamp(Math.abs(index - position), 0, 1);
@@ -28,8 +29,11 @@ function arrangeBooks(count, position) {
   }));
 }
 
-export default function BookRow({ row, active, assets }) {
-  const initialIndex = Math.floor(row.entries.length / 2);
+export default function BookRow({ row, active, base, initialBook, onOpen }) {
+  const restoredIndex = row.entries.findIndex(book => book.id === initialBook);
+  const featuredIndex = row.entries.findIndex(book => book.featured);
+  const firstIndex = row.entries.findIndex(book => !book.blank);
+  const initialIndex = restoredIndex >= 0 ? restoredIndex : Math.max(0, featuredIndex >= 0 ? featuredIndex : firstIndex);
   const [position, setPosition] = useState(initialIndex);
   const [selected, setSelected] = useState(initialIndex);
   const positionRef = useRef(initialIndex);
@@ -122,6 +126,23 @@ export default function BookRow({ row, active, assets }) {
     select(target.current + step);
   }
 
+  function activate(book, index) {
+    if (book.href && index === selected && position === index) {
+      onOpen();
+      location.assign(base + book.href);
+      return;
+    }
+    select(index);
+  }
+
+  if (!entry) {
+    return (
+      <section className="book-row" id={row.id} aria-label={row.title} inert={!active}>
+        <p className="book-row-empty">这一排还没有文章。</p>
+      </section>
+    );
+  }
+
   return (
     <section className="book-row" id={row.id} aria-label={row.title} inert={!active} onKeyDown={handleKeys}>
       <div className="book-track" data-sliding={position !== selected} ref={track}
@@ -137,16 +158,16 @@ export default function BookRow({ row, active, assets }) {
           }
         }}>
         {row.entries.map((book, index) => (
-          <button type="button" key={book.title} className={`shelf-book tone-${book.tone}`}
+          <button type="button" key={book.id} data-book-id={book.id} className={`shelf-book tone-${book.tone}`}
             style={bookStyles[index]} aria-label={book.title} aria-pressed={selected === index}
             tabIndex={selected === index ? 0 : -1}
-            onClick={() => select(index)}>
+            onClick={() => activate(book, index)}>
             <span className="book-motion" aria-hidden="true">
               <span className="book-box">
                 <span className="book-face book-cover">
                   {!book.blank && <>
                     <span className="cover-category">{row.title}</span>
-                    {book.image ? <img src={assets + book.image} alt="" draggable="false" />
+                    {book.cover ? <img src={base + book.href + book.cover} alt="" draggable="false" />
                       : <span className="cover-mark">{book.mark}</span>}
                     <span className="cover-title">{book.title}</span>
                   </>}
@@ -167,7 +188,15 @@ export default function BookRow({ row, active, assets }) {
         </button>
         <div className="book-caption-text" aria-live="polite">
           <h2>{entry.title}</h2>
-          <p>{entry.subtitle}</p>
+          {(entry.date || entry.summary) && <p>
+            {entry.date && <time dateTime={entry.date}>{entry.date}</time>}
+            {entry.date && entry.summary && " · "}
+            {entry.summary}
+          </p>}
+          {entry.href && position === selected && <a className="book-read-link" href={base + entry.href}
+            onClick={(event) => {
+              if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onOpen();
+            }}>阅读全文</a>}
         </div>
         <button type="button" className="book-step shelf-glass-control" aria-label="下一本"
           disabled={selected === last && position === last} onClick={() => select(target.current + 1)}>

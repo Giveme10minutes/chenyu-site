@@ -483,3 +483,20 @@
   .book-row-caption h2 { font-size: 17px; }
   .book-row-caption p { margin-top: 3px; }
 }
+
+.book-row-empty {
+  position: absolute;
+  inset: var(--book-top) 0 auto;
+  margin: 0;
+  text-align: center;
+  color: #536172;
+}
+
+.book-read-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  color: #244c88;
+  font: 500 .76rem/1.3 system-ui, sans-serif;
+  text-underline-offset: .22em;
+}

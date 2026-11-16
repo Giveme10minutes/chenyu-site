@@ -1,0 +1,85 @@
+* { box-sizing: border-box; }
+
+html { background: #f6f2e9; color: #233043; }
+
+body {
+  margin: 0;
+  font-family: "Songti SC", "Noto Serif CJK SC", serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+.reading-page {
+  width: min(100% - 40px, 680px);
+  margin-inline: auto;
+  padding-block: clamp(26px, 7vw, 76px) 80px;
+  overflow-wrap: anywhere;
+}
+
+.reading-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #3f5368;
+  font: 500 .88rem/1.4 system-ui, sans-serif;
+}
+
+.reading-header {
+  margin-block: clamp(36px, 8vw, 86px) 32px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid #d6cfc1;
+}
+
+.reading-meta,
+.reading-summary { color: #536172; }
+
+.reading-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin: 0 0 12px;
+  font: 500 .83rem/1.5 system-ui, sans-serif;
+}
+
+.reading-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.7rem);
+  line-height: 1.18;
+  text-wrap: balance;
+}
+
+.reading-summary { margin: 16px 0 0; }
+
+.reading-cover,
+.reading-body img {
+  display: block;
+  max-width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  margin-block: 0 30px;
+}
+
+.reading-body h2,
+.reading-body h3 {
+  margin-block: 1.65em .45em;
+  line-height: 1.35;
+}
+
+.reading-body a {
+  color: #244c88;
+  text-underline-offset: .2em;
+}
+
+.reading-body pre {
+  overflow: auto;
+  padding: 12px 16px;
+  background: #ece6db;
+  font-size: .87em;
+}
+
+.reading-body blockquote {
+  margin-inline: 0;
+  padding-inline-start: 18px;
+  border-left: 2px solid #bcb2a3;
+  color: #536172;
+}

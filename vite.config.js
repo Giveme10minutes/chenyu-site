@@ -4,7 +4,7 @@ export default defineConfig({
   publicDir: false,
   define: { "process.env.NODE_ENV": JSON.stringify("production") },
   build: {
-    outDir: "docs/showcase/react",
+    outDir: "docs/blog/assets/react",
     emptyOutDir: true,
     lib: {
       entry: "homepage/client.jsx",

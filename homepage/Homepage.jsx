@@ -4,9 +4,20 @@ import ButterflyTransition from "./ButterflyTransition.jsx";
 import Bookshelf from "./Bookshelf.jsx";
 import { attachScrollScenes } from "./scrollScenes.js";
 
-export default function Homepage({ initialRoute, base, assets, navigationBase = base, stableAssets = assets }) {
+function readShelfState(rows) {
+  const saved = history.state?.bookshelf;
+  const [requestedRow, requestedBook] = new URLSearchParams(location.search).get("book")?.split("/") ?? [];
+  const request = rows.find(row => row.id === requestedRow && row.entries.some(book => book.id === requestedBook));
+  if (request) {
+    return { row: request.id, selections: { ...saved?.selections, [request.id]: requestedBook } };
+  }
+  return rows.some(row => row.id === saved?.row) ? saved : null;
+}
+
+export default function Homepage({ initialRoute, base, assets, rows, navigationBase = base, stableAssets = assets }) {
   const [route, setRoute] = useState(initialRoute);
   const [hydrated, setHydrated] = useState(false);
+  const [restoration, setRestoration] = useState(null);
   const scene = useRef(null);
   const shelfUrl = navigationBase;
   const introUrl = navigationBase + "intro/";
@@ -26,13 +37,18 @@ export default function Homepage({ initialRoute, base, assets, navigationBase = 
     setHydrated(true);
     const restoration = history.scrollRestoration;
     history.scrollRestoration = "manual";
-    const restoreRoute = () => setRoute(location.pathname === introUrl ? "intro" : "shelf");
+    if (initialRoute === "shelf") setRestoration(readShelfState(rows));
+    const restoreRoute = () => {
+      const next = location.pathname === introUrl ? "intro" : "shelf";
+      setRestoration(next === "shelf" ? readShelfState(rows) : null);
+      setRoute(next);
+    };
     addEventListener("popstate", restoreRoute);
     return () => {
       history.scrollRestoration = restoration;
       removeEventListener("popstate", restoreRoute);
     };
-  }, [introUrl, stableAssets]);
+  }, [introUrl, initialRoute, rows, stableAssets]);
 
   useLayoutEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -53,8 +69,8 @@ export default function Homepage({ initialRoute, base, assets, navigationBase = 
     <main ref={scene} className="scene" aria-label={route === "intro" ? "陈煜的自我介绍" : "陈煜的个人博客"}>
       <div className="stage">
         {route === "intro" && <PortraitScene assets={assetPath} />}
-        <Bookshelf route={route} assets={assetPath} introHref={introHref}
-          onIntro={(event) => follow(event, "intro")} />
+        <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
+          restoration={restoration} introHref={introHref} onIntro={(event) => follow(event, "intro")} />
         {route === "intro" && <>
           <ButterflyTransition />
           <a className="shelf-skip" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 →</a>

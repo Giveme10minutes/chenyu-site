@@ -7,13 +7,14 @@
   <title>{{TITLE}}</title>
   <link rel="icon" href="{{ASSETS}}butterfly-blue.webp" type="image/webp">
 {{PRELOAD}}
-  <link rel="stylesheet" href="{{ASSETS}}portrait.css?v=bookshelf">
-  <link rel="stylesheet" href="{{ASSETS}}butterfly.css?v=10">
+  <link rel="stylesheet" href="{{ASSETS}}portrait.css?v={{VERSION}}">
+  <link rel="stylesheet" href="{{ASSETS}}butterfly.css?v={{VERSION}}">
   <link rel="stylesheet" href="{{ASSETS}}bookshelf.css?v={{VERSION}}">
 </head>
 
 <body>
   <div id="homepage" data-route="{{ROUTE}}" data-base="{{BASE}}" data-assets="{{ASSETS}}">{{APP}}</div>
+  <script id="shelf-data" type="application/json">{{ROWS}}</script>
   <script src="{{ASSETS}}react/homepage.js?v={{VERSION}}" defer></script>
 </body>
 
