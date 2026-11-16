@@ -286,6 +286,22 @@
 .tone-green { --cloth: #315a51; --edge: #233d35; --ink: #f9ebce; }
 .tone-sand { --cloth: #d8c19a; --edge: #9a8063; --ink: #37281d; }
 
+/* Keep the target in place as the visible book lifts and turns. */
+.shelf-book::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 50%;
+  width: calc(var(--book-height) * var(--book-width) + 3px);
+  translate: -50% 0;
+  pointer-events: auto;
+}
+
+.book-motion {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
 .book-box {
   position: absolute;
   inset: 0;
@@ -308,8 +324,8 @@
     repeating-linear-gradient(91deg, transparent 0 2px, rgb(255 251 239 / 5%) 2px 3px),
     linear-gradient(150deg, rgb(255 243 213 / 16%), transparent 45%, rgb(23 15 12 / 17%)),
     var(--cloth);
-  box-shadow: inset 0 0 0 3px rgb(255 237 213 / 11%), inset 0 0 18px rgb(30 18 12 / 23%), 2px 7px 10px rgb(60 42 30 / 13%);
-  pointer-events: auto;
+  box-shadow: inset 0 0 0 3px rgb(255 237 213 / 11%), inset 0 0 18px rgb(30 18 12 / 23%),
+    2px var(--book-shadow-y, 7px) var(--book-shadow-blur, 10px) rgb(60 42 30 / 13%);
 }
 
 .shelf-book:focus-visible .book-face {
@@ -317,8 +333,37 @@
   outline-offset: 3px;
 }
 
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .shelf-book:hover .book-box { top: -4px; }
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .book-motion {
+    transform: perspective(calc(var(--book-height) * 8))
+      translate3d(0, var(--book-lift, 0px), var(--book-depth, 0px))
+      rotateY(var(--book-peek, 0deg)) rotateX(var(--book-tilt, 0deg));
+    transition: transform 200ms cubic-bezier(.2, .65, .3, 1);
+  }
+
+  .book-cover,
+  .book-spine { transition: box-shadow 200ms ease-out; }
+
+  .book-track[data-sliding="false"] .shelf-book:hover {
+    --book-lift: -8px;
+    --book-depth: 24px;
+    --book-peek: -7deg;
+    --book-shadow-y: 11px;
+    --book-shadow-blur: 16px;
+  }
+
+  .book-track[data-sliding="false"] .shelf-book[aria-pressed="true"]:hover {
+    --book-lift: -3px;
+    --book-depth: 12px;
+    --book-peek: 0deg;
+    --book-tilt: -4deg;
+    --book-shadow-y: 9px;
+    --book-shadow-blur: 13px;
+  }
+
+  .book-track[data-sliding="false"] .shelf-book:hover .book-motion {
+    transition: transform 280ms cubic-bezier(.2, 2.55, .35, 1);
+  }
 }
 
 .book-cover {

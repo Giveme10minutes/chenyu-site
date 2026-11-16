@@ -14,14 +14,15 @@ function arrangeBooks(count, position) {
     const width = coverWidth * Math.cos(angle) + spineWidth * Math.sin(angle);
     const center = edge + width / 2;
     edge += width + gap + 0.035 * openness;
-    return { center, openness, angle };
+    return { center, openness, angle, width };
   });
   const left = Math.floor(position);
   const right = Math.min(left + 1, count - 1);
   const origin = books[left].center + (position - left) * (books[right].center - books[left].center);
-  return books.map(({ center, openness, angle }) => ({
+  return books.map(({ center, openness, angle, width }) => ({
     "--book-x": center - origin,
     "--book-open": openness,
+    "--book-width": width,
     "--book-turn": `${angle}rad`,
     zIndex: Math.round(openness * 100),
   }));
@@ -116,7 +117,8 @@ export default function BookRow({ row, active, assets }) {
 
   return (
     <section className="book-row" id={row.id} aria-label={row.title} inert={!active} onKeyDown={handleKeys}>
-      <div className="book-track" ref={track} onPointerDown={startDrag} onPointerMove={drag}
+      <div className="book-track" data-sliding={position !== selected} ref={track}
+        onPointerDown={startDrag} onPointerMove={drag}
         onPointerUp={endDrag} onPointerCancel={endDrag}
         onLostPointerCapture={(event) => {
           if (event.target === track.current) endDrag(event);
@@ -131,15 +133,17 @@ export default function BookRow({ row, active, assets }) {
           <button type="button" key={book.title} className={`shelf-book tone-${book.tone}`}
             style={bookStyles[index]} aria-label={book.title} aria-pressed={selected === index}
             onClick={() => select(index)}>
-            <span className="book-box" aria-hidden="true">
-              <span className="book-face book-cover">
-                <span className="cover-category">{row.title}</span>
-                {book.image ? <img src={assets + book.image} alt="" draggable="false" />
-                  : <span className="cover-mark">{book.mark}</span>}
-                <span className="cover-title">{book.title}</span>
+            <span className="book-motion" aria-hidden="true">
+              <span className="book-box">
+                <span className="book-face book-cover">
+                  <span className="cover-category">{row.title}</span>
+                  {book.image ? <img src={assets + book.image} alt="" draggable="false" />
+                    : <span className="cover-mark">{book.mark}</span>}
+                  <span className="cover-title">{book.title}</span>
+                </span>
+                <span className="book-face book-spine">{book.spine ?? book.title}</span>
+                <span className="book-face book-pages" />
               </span>
-              <span className="book-face book-spine">{book.spine ?? book.title}</span>
-              <span className="book-face book-pages" />
             </span>
           </button>
         ))}
