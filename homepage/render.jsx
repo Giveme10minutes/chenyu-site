@@ -20,6 +20,7 @@ const rows = blog.map(({ category, articles }) => {
 });
 const serializedRows = JSON.stringify(rows).replaceAll("<", "\\u003c");
 const template = await readFile(new URL("./template.html", import.meta.url), "utf8");
+const portraits = ["portrait-invite.webp", "portrait-call.webp", "portrait-team.webp"];
 const sprites = ["blue", "ivory", "swallowtail", "amber", "jade", "rose"].map(color => `butterfly-${color}.webp`);
 
 await mkdir(dirname(destination), { recursive: true });
@@ -43,6 +44,11 @@ try {
   await writeFile(join(assets, "article-return.js"), backScript);
   await copyFile(join(root, "docs/showcase/portrait.webp"), join(assets, "portrait.webp"));
   await Promise.all(sprites.map(sprite => copyFile(join(root, "homepage/media", sprite), join(assets, sprite))));
+  for (const portrait of portraits) {
+    const photo = await readFile(join(root, "homepage/media", portrait));
+    hash.update(photo);
+    await writeFile(join(assets, portrait), photo);
+  }
   const version = hash.digest("hex").slice(0, 12);
 
   for (const { route, directory, base, title } of [

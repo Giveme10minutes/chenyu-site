@@ -26,15 +26,21 @@ body {
 }
 
 .portrait-frame {
+  height: auto;
+  background: #000;
+}
+
+.portrait-shot {
+  position: relative;
   display: grid;
   place-items: center;
-  --portrait-shift: min(12vw, 240px);
+  min-height: 88svh;
+  overflow: hidden;
+  perspective: 1100px;
 }
 
 .portrait {
-  width: min(100vw, 80svh, 820px);
-  position: relative;
-  transform: translateX(calc(-1 * var(--portrait-shift)));
+  width: min(100vw, 79svh, 780px);
   transform-origin: 49% 35%;
 }
 
@@ -42,69 +48,65 @@ body {
   display: block;
   width: 100%;
   height: auto;
+  mask-image: linear-gradient(#000 87%, transparent);
 }
 
-.portrait::after {
-  content: "";
+.portrait-opening .portrait {
+  margin-right: 15vw;
+}
+
+.portrait-caption {
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(0deg, #000, transparent 20%, transparent 94%, #000),
-    linear-gradient(90deg, #000, transparent 8%, transparent 90%, #000);
-}
-
-.intro {
-  position: absolute;
-  top: 34%;
-  left: 59%;
-  right: 5%;
-  max-width: 460px;
-}
-
-.intro h1 {
-  margin: 0 0 clamp(22px, 3vh, 36px);
-  color: #f4f0e9;
-  font-size: clamp(56px, 6.8vw, 112px);
-  font-weight: 600;
-  line-height: 1.06;
-  letter-spacing: .055em;
-}
-
-.latin-name {
-  display: block;
-  margin-top: 15px;
-  color: #aaa6a0;
-  font-size: clamp(15px, 1.2vw, 21px);
-  font-weight: 400;
-  letter-spacing: .13em;
-}
-
-.intro-summary {
-  color: #bdbbb7;
-  font-size: clamp(15px, 1.26vw, 22px);
-  line-height: 1.85;
-}
-
-.intro-summary p {
+  z-index: 1;
   margin: 0;
+  color: #f5eee3;
+  font: 650 clamp(2.5rem, 6.4vw, 7.5rem)/1.14 "Songti SC", "Noto Serif SC", serif;
+  letter-spacing: .04em;
+  text-shadow: 0 3px 30px #000;
 }
 
-.intro-summary .education {
-  padding-top: 17px;
-  border-top: 1px solid #353331;
-  color: #e7e2da;
-  font-weight: 550;
+.portrait-opening .portrait-caption {
+  top: 40%;
+  left: 62%;
 }
 
-.intro-summary .bio {
-  margin-top: .75em;
-  text-wrap: pretty;
+.portrait-actor {
+  display: block;
+  width: min(60vw, 88svh, 870px);
+  height: 100%;
+  max-height: 100svh;
+  object-fit: contain;
+  mask-image: linear-gradient(#000 82%, transparent);
 }
 
-.intro-summary .interests {
-  margin-top: .85em;
-  color: #e7e2da;
+.portrait-invite .portrait-actor {
+  margin-left: 23vw;
+}
+
+.portrait-invite .portrait-caption {
+  left: 11%;
+  top: 38%;
+}
+
+.portrait-call .portrait-actor {
+  margin-right: 23vw;
+}
+
+.portrait-call .portrait-caption {
+  right: 8%;
+  top: 37%;
+  font-size: clamp(2rem, 5vw, 5.5rem);
+}
+
+.portrait-team .portrait-actor {
+  width: min(100%, 126svh, 1480px);
+}
+
+.portrait-team .portrait-caption {
+  inset: auto 4% 10%;
+  text-align: center;
+  font-size: clamp(2rem, 6.5vw, 7rem);
+  text-wrap: balance;
 }
 
 .scroll-cue {
@@ -178,33 +180,59 @@ body {
 
   .is-interactive #portrait-revealed {
     position: absolute;
-    top: 155svh;
+    top: 82svh;
+  }
+
+  .is-interactive .portrait-shot {
+    position: absolute;
+    inset: 0;
+    min-height: 0;
+    opacity: var(--shot-opacity, 0);
+  }
+
+  .is-interactive .portrait-opening {
+    --shot-opacity: 1;
   }
 
   .is-interactive .portrait {
     transform:
-      translateX(calc(-1 * var(--portrait-shift) * var(--portrait-pan, 0)))
       translateY(calc(clamp(92px, 14vh, 150px) * var(--portrait-rise, 1)))
       scale(var(--portrait-scale, 1));
   }
 
   .is-interactive .portrait img {
     opacity: var(--portrait-opacity, 0);
+    mask-image:
+      radial-gradient(ellipse var(--light-width, 20%) var(--light-height, 12%) at 49% 35%,
+        #000 38%, rgb(0 0 0 / 82%) 56%, transparent 100%),
+      linear-gradient(#000 87%, transparent);
+    mask-composite: intersect;
+  }
+
+  .is-interactive :is(.portrait-invite, .portrait-call) .portrait-actor {
+    transform: translateX(var(--actor-shift, 0%)) rotateY(var(--turn, 0deg));
+    mask-image:
+      radial-gradient(
+        ellipse calc(7% + 91% * var(--shot-light, 0)) calc(5% + 109% * var(--shot-light, 0))
+        at 50% calc(68% - 32% * var(--shot-light, 0)), #000 28%, transparent 100%),
+      linear-gradient(#000 76%, transparent 97%);
+    mask-composite: intersect;
+  }
+
+  .is-interactive :is(.portrait-invite, .portrait-call) .portrait-caption {
+    opacity: var(--caption-opacity, 0);
+  }
+
+  .is-interactive .portrait-team .portrait-actor {
+    transform: scale(var(--team-scale, 1));
     mask-image: radial-gradient(
-      ellipse var(--light-width, 20%) var(--light-height, 12%) at 49% 35%,
-      #000 38%,
-      rgb(0 0 0 / 82%) 56%,
-      transparent 100%
+      ellipse calc(10% + 82% * var(--shot-light, 0)) calc(13% + 73% * var(--shot-light, 0))
+      at 50% 43%, #000 55%, transparent 100%
     );
   }
 
-  .is-interactive .intro h1 {
-    opacity: var(--name-opacity, 0);
-    transform: translateY(var(--name-offset, 12px));
-  }
-
-  .is-interactive .intro-summary {
-    opacity: var(--summary-opacity, 0);
+  .is-interactive .portrait-team .portrait-caption {
+    opacity: var(--team-caption, 0);
   }
 
   .is-interactive .scroll-cue {
@@ -267,15 +295,49 @@ body {
     justify-content: flex-end;
   }
 
-  .portrait-frame {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    padding: 36px 24px 44px;
+  .portrait-shot {
+    min-height: 78svh;
   }
 
-  .portrait { width: min(100%, 400px); transform: none; }
-  .intro { position: static; width: 100%; }
+  .portrait-opening .portrait,
+  .portrait-invite .portrait-actor,
+  .portrait-call .portrait-actor {
+    width: min(100%, 64svh);
+    max-height: 77svh;
+    margin: 0;
+    object-fit: contain;
+  }
+
+  .portrait-caption,
+  .portrait-opening .portrait-caption,
+  .portrait-invite .portrait-caption,
+  .portrait-call .portrait-caption {
+    inset: auto 5% 16%;
+    text-align: center;
+  }
+
+  .portrait-opening .portrait-caption {
+    bottom: 21%;
+  }
+
+  .portrait-team .portrait-caption {
+    position: relative;
+    inset: auto;
+    grid-row: 3;
+    align-self: start;
+    margin: 0 12px 1rem;
+  }
+
+  .portrait-team {
+    grid-template-rows: 1fr auto 1fr;
+    align-content: center;
+  }
+
+  .portrait-team .portrait-actor {
+    grid-row: 2;
+    height: auto;
+  }
+
   .award-frame { height: max(480px, 80svh); }
   .robot { left: 50%; top: 40%; }
   .robot-floor { top: 32%; left: 13%; width: 74%; }
