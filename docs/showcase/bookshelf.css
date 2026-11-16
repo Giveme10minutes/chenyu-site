@@ -334,35 +334,34 @@
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .book-track { --book-hover-timing: 240ms cubic-bezier(.3, 0, .4, 1); }
+
   .book-motion {
     transform: perspective(calc(var(--book-height) * 8))
       translate3d(0, var(--book-lift, 0px), var(--book-depth, 0px))
       rotateY(var(--book-peek, 0deg)) rotateX(var(--book-tilt, 0deg));
-    transition: transform 200ms cubic-bezier(.2, .65, .3, 1);
+    transition: transform var(--book-hover-timing);
   }
 
   .book-cover,
-  .book-spine { transition: box-shadow 200ms ease-out; }
+  .book-spine { transition: box-shadow var(--book-hover-timing); }
 
   .book-track[data-sliding="false"] .shelf-book:hover {
-    --book-lift: -8px;
-    --book-depth: 24px;
-    --book-peek: -7deg;
-    --book-shadow-y: 11px;
-    --book-shadow-blur: 16px;
-  }
-
-  .book-track[data-sliding="false"] .shelf-book[aria-pressed="true"]:hover {
-    --book-lift: -3px;
+    --book-hover-timing: 340ms cubic-bezier(.36, 0, .34, 1);
+    --book-lift: -5px;
     --book-depth: 12px;
-    --book-peek: 0deg;
-    --book-tilt: -4deg;
+    --book-peek: -4deg;
     --book-shadow-y: 9px;
     --book-shadow-blur: 13px;
   }
 
-  .book-track[data-sliding="false"] .shelf-book:hover .book-motion {
-    transition: transform 280ms cubic-bezier(.2, 2.55, .35, 1);
+  .book-track[data-sliding="false"] .shelf-book[aria-pressed="true"]:hover {
+    --book-lift: -1.5px;
+    --book-depth: 6px;
+    --book-peek: 0deg;
+    --book-tilt: -2deg;
+    --book-shadow-y: 8px;
+    --book-shadow-blur: 11px;
   }
 }
 
