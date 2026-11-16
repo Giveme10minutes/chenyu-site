@@ -6,3 +6,9 @@
 - 根路径根据浏览器是否完成开场，进入介绍或书架。直达文章可直接读正文，书架可随时重看介绍。
 - 构建输出到 `dist/`，由 GitHub Actions 发布。旧的学习区、经典版和作品集路径保留跳转入口。旧博客路径继续由新版博客使用。
 - 干净安装与构建通过。用项目子路径在 Chrome 测试首次访问、中途离开、转场完成、跳过开场、回访和重看介绍。也覆盖手机、详情页直达与返回，以及关闭站点存储时的行为。
+
+## GitHub Pages 上线 · 2026-11-16
+
+- 独立仓库 [Giveme10minutes/chenyu-site](https://github.com/Giveme10minutes/chenyu-site) 的首发构建通过 [Pages 发布任务](https://github.com/Giveme10minutes/chenyu-site/actions/runs/43783953901)。
+- 先验证默认 Pages 项目路径，再把 `yuchen.ink` 绑定到新仓库。HTTPS 已启用，原有 GitHub Pages DNS 记录继续使用。
+- 已在新域名重测首次访问、回访、重看介绍、手机详情直达及返回。旧路径 `/study/`、`/classic/`、`/showcase/` 复查可达，学习区的锚点随跳转保留。原仓库仍通过 [原版主页](https://giveme10minutes.github.io/Giveme10minutes/) 提供对应内容。
