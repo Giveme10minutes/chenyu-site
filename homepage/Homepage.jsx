@@ -1,6 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import PortraitScene from "./PortraitScene.jsx";
-import ButterflyTransition from "./ButterflyTransition.jsx";
 import Bookshelf from "./Bookshelf.jsx";
 import { attachScrollScenes } from "./scrollScenes.js";
 
@@ -72,7 +71,6 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
         <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
           restoration={restoration} introHref={introHref} onIntro={(event) => follow(event, "intro")} />
         {route === "intro" && <>
-          <ButterflyTransition />
           <a className="shelf-continue" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 →</a>
           <a className="scroll-cue" href="#portrait-revealed" aria-label="向下滚动，点亮肖像">
             <span className="scroll-arrow" aria-hidden="true" />

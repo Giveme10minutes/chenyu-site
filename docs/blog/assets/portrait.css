@@ -176,6 +176,7 @@ body {
     top: 0;
     height: 100svh;
     isolation: isolate;
+    overflow: clip;
   }
 
   .is-interactive .portrait-frame,
@@ -186,7 +187,9 @@ body {
   }
 
   .is-interactive .portrait-frame {
-    opacity: var(--intro-scene-opacity, 1);
+    z-index: 1;
+    translate: 0 var(--poster-offset, 0%);
+    box-shadow: 0 12px 28px rgb(0 0 0 / var(--poster-shadow, 0));
   }
 
   .is-interactive #portrait-revealed {
@@ -234,6 +237,10 @@ body {
     opacity: var(--caption-opacity, 0);
   }
 
+  .is-interactive .portrait-team {
+    scale: var(--poster-scale, 1);
+  }
+
   .is-interactive .portrait-team .portrait-actor {
     transform: scale(var(--team-scale, 1));
     mask-image: radial-gradient(
@@ -248,6 +255,7 @@ body {
 
   .is-interactive .scroll-cue {
     display: block;
+    z-index: 2;
     opacity: var(--cue-opacity, 1);
   }
 
@@ -258,6 +266,18 @@ body {
   .is-interactive .scroll-cue.is-hidden {
     visibility: hidden;
   }
+
+  @media (max-width: 760px) {
+    .is-interactive .portrait-frame {
+      justify-content: center;
+      height: 100%;
+      padding: 16px 24px;
+    }
+
+    .is-interactive .portrait {
+      width: min(74vw, 37svh, 320px);
+    }
+  }
 }
 
 .showcase-footer {
@@ -265,6 +285,7 @@ body {
 
   .is-interactive .scroll-cue {
     display: block;
+    z-index: 2;
     opacity: var(--cue-opacity, 1);
   }
 
@@ -286,6 +307,7 @@ body {
 
   .is-interactive .scroll-cue {
     display: block;
+    z-index: 2;
     opacity: var(--cue-opacity, 1);
   }
 
@@ -306,6 +328,7 @@ body {
 
   .is-interactive .scroll-cue {
     display: block;
+    z-index: 2;
     opacity: var(--cue-opacity, 1);
   }
 
@@ -330,6 +353,7 @@ body {
 
   .is-interactive .scroll-cue {
     display: block;
+    z-index: 2;
     opacity: var(--cue-opacity, 1);
   }
 

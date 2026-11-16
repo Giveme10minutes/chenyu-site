@@ -21,7 +21,6 @@ const rows = blog.map(({ category, articles }) => {
 const serializedRows = JSON.stringify(rows).replaceAll("<", "\\u003c");
 const template = await readFile(new URL("./template.html", import.meta.url), "utf8");
 const portraits = ["portrait-invite.webp", "portrait-call.webp", "portrait-team.webp"];
-const sprites = ["blue", "ivory", "swallowtail", "amber", "jade", "rose"].map(color => `butterfly-${color}.webp`);
 
 await mkdir(dirname(destination), { recursive: true });
 const staging = await mkdtemp(join(dirname(destination), ".blog-build-"));
@@ -34,7 +33,7 @@ let installed = false;
 try {
   await build({ build: { outDir: join(assets, "react") } });
   const hash = createHash("sha256").update(await readFile(join(assets, "react/homepage.js")));
-  for (const style of ["portrait.css", "butterfly.css", "bookshelf.css", "article.css"]) {
+  for (const style of ["portrait.css", "bookshelf.css", "article.css"]) {
     const stylesheet = await readFile(join(root, "homepage/styles", style));
     hash.update(stylesheet);
     await writeFile(join(assets, style), stylesheet);
@@ -43,7 +42,7 @@ try {
   hash.update(backScript).update(serializedRows);
   await writeFile(join(assets, "article-return.js"), backScript);
   await copyFile(join(root, "docs/showcase/portrait.webp"), join(assets, "portrait.webp"));
-  await Promise.all(sprites.map(sprite => copyFile(join(root, "homepage/media", sprite), join(assets, sprite))));
+  await copyFile(join(root, "homepage/media/butterfly-blue.webp"), join(assets, "butterfly-blue.webp"));
   for (const portrait of portraits) {
     const photo = await readFile(join(root, "homepage/media", portrait));
     hash.update(photo);
@@ -57,9 +56,6 @@ try {
   ]) {
     const assetsHref = base + "assets/";
     const values = {
-      PRELOAD: route === "intro" ? sprites.map(sprite =>
-        `  <link rel="preload" href="${assetsHref}${sprite}" as="image" media="(prefers-reduced-motion: no-preference)">`
-      ).join("\n") : "",
       ASSETS: assetsHref,
       ROUTE: route,
       BASE: base,

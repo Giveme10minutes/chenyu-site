@@ -1,4 +1,31 @@
 .blog-landing {
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  color: #213044;
+  color-scheme: light;
+}
+
+.blog-landing::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(ellipse at 52% 39%, #f6f2e9 0%, #ebe4d7 75%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .is-interactive .blog-landing {
+    position: absolute;
+    inset: 0;
+  }
+
+  .is-interactive .blog-landing > * {
+    translate: 0 var(--shelf-rise, 24px);
+  }
+}
+
+.blog-landing {
   --book-height: clamp(104px, 45svh, min(420px, 55vw));
   --peek: clamp(14px, 3.2svh, 30px);
   --book-top: calc((100svh - var(--book-height)) / 2);

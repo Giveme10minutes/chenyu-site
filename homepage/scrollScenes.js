@@ -1,24 +1,17 @@
-import { butterflyPaths } from "./butterflyPaths.js";
-
-const butterflyOffset = 3.55;
-const transitionStart = 1.78;
-const transitionEnd = Math.max(...butterflyPaths.map(({ end }) => end));
+const posterExitStart = 5.15;
+const posterExitEnd = 6.05;
 
 export function attachScrollScenes(scene, finish) {
   const stage = scene.querySelector(".stage");
   const cue = scene.querySelector(".scroll-cue");
-  const flight = scene.querySelector(".butterfly-flight");
-  const butterflies = [...flight.querySelectorAll(".butterfly")];
   const landing = scene.querySelector(".blog-landing");
   const portrait = scene.querySelector(".portrait-frame");
   const [opening, invite, call, team] = portrait.querySelectorAll(".portrait-shot");
   const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
 
-  scene.style.setProperty("--intro-screens", 1 + butterflyOffset + transitionEnd);
+  scene.style.setProperty("--intro-screens", 1 + posterExitEnd);
 
   let frame = 0;
-  let transitionScroll;
-  let previousFrameTime;
 
   function clamp(value) {
     return Math.max(0, Math.min(1, value));
@@ -32,10 +25,10 @@ export function attachScrollScenes(scene, finish) {
     return progress * progress * (3 - 2 * progress);
   }
 
-  function render(now) {
+  function render() {
     frame = 0;
     const { top } = scene.getBoundingClientRect();
-    const { width, height } = stage.getBoundingClientRect();
+    const { height } = stage.getBoundingClientRect();
     const scroll = -top / height;
     const progress = clamp(scroll / 1.76);
     const rise = between(progress, 0, 0.43);
@@ -65,22 +58,13 @@ export function attachScrollScenes(scene, finish) {
     scene.style.setProperty("--cue-scale", cueScale);
     cue.classList.toggle("is-hidden", cueFade === 1);
     // Allow the last pixel of travel to round down on fractional viewport sizes.
-    const target = Math.max(transitionStart, Math.min(transitionEnd, scroll - butterflyOffset + 1 / height));
-    const previousScroll = transitionScroll ?? target;
-    const elapsed = Math.max(1, now - (previousFrameTime ?? now - 16.7));
-    if (transitionScroll === undefined || Math.abs(target - transitionScroll) < 0.005) {
-      transitionScroll = target;
-      previousFrameTime = undefined;
-    } else {
-      // Ease wheel steps into motion without adding lag to the portrait reveal.
-      transitionScroll += (target - transitionScroll) * (1 - Math.exp(-Math.min(elapsed, 32) / 30));
-      previousFrameTime = now;
-      scheduleRender();
-    }
-
-    const flightSpeed = (transitionScroll - previousScroll) * 1000 / elapsed;
-    renderTransition(transitionScroll, width / height, flightSpeed);
-    if (transitionScroll === transitionEnd) finish();
+    const exit = between(scroll + 1 / height, posterExitStart, posterExitEnd);
+    const revealShelf = ease(exit);
+    scene.style.setProperty("--poster-offset", `${-100 * exit}%`);
+    scene.style.setProperty("--poster-scale", 1 - 0.045 * revealShelf);
+    scene.style.setProperty("--poster-shadow", 0.24 * (1 - revealShelf));
+    scene.style.setProperty("--shelf-rise", `${24 * (1 - revealShelf)}px`);
+    if (exit === 1) finish();
   }
 
   function renderShot(shot, opacity, light = 1) {
@@ -99,50 +83,6 @@ export function attachScrollScenes(scene, finish) {
     shot.style.setProperty("--caption-opacity", ease(between(scroll, 0.36, 0.61)));
   }
 
-  function renderTransition(scroll, aspectRatio, flightSpeed) {
-    const portraitExit = ease(between(scroll, 1.98, 2.67));
-    const paper = ease(between(scroll, 2.04, 2.94));
-    const content = ease(between(scroll, 2.49, transitionEnd));
-    scene.style.setProperty("--intro-scene-opacity", 1 - portraitExit);
-    landing.style.setProperty("--paper-opacity", ease(between(scroll, 2.02, 2.68)));
-    landing.style.setProperty("--paper-spread", `${14 + 134 * paper}%`);
-    landing.style.setProperty("--paper-x", `${87 - 32 * paper}%`);
-    landing.style.setProperty("--paper-y", `${79 - 29 * paper}%`);
-    landing.style.setProperty("--landing-opacity", content);
-    landing.style.setProperty("--landing-offset", `${16 * (1 - content)}px`);
-    landing.inert = true;
-    portrait.inert = portraitExit === 1;
-    const isFlying = scroll > transitionStart && scroll < transitionEnd;
-    flight.classList.toggle("is-flying", isFlying);
-    if (!isFlying) return;
-
-    butterflies.forEach((butterfly, index) => {
-      const { start, end, origin, bend, exit, size, foreground } = butterflyPaths[index];
-      const progress = between(scroll, start, end);
-      if (progress === 0 || progress === 1) {
-        butterfly.style.opacity = 0;
-        return;
-      }
-      if (foreground) {
-        const smear = ease(between(flightSpeed, 0.45, 2.7)) * (1 - ease(between(progress, 0.30, 0.62)));
-        butterfly.style.setProperty("--motion-smear", smear);
-      }
-      const remaining = 1 - progress;
-      const point = origin.map((value, axis) => (
-        remaining ** 2 * value + 2 * remaining * progress * bend[axis] + progress ** 2 * exit[axis]
-      ));
-      const [dx, dy] = origin.map((value, axis) => (
-        remaining * (bend[axis] - value) + progress * (exit[axis] - bend[axis])
-      ));
-
-      butterfly.style.setProperty("--flight-x", `${point[0]}vw`);
-      butterfly.style.setProperty("--flight-y", `${point[1]}svh`);
-      butterfly.style.setProperty("--flight-angle", `${Math.atan2(dx * aspectRatio, -dy)}rad`);
-      butterfly.style.setProperty("--flight-size", size * (0.74 + 0.36 * Math.sin(Math.PI * progress)));
-      butterfly.style.opacity = ease(between(progress, 0, 0.12)) * (1 - ease(between(progress, 0.84, 1)));
-    });
-  }
-
   function scheduleRender() {
     if (immersiveLayout.matches && !frame) {
       frame = requestAnimationFrame(render);
@@ -151,15 +91,11 @@ export function attachScrollScenes(scene, finish) {
 
   function applyLayoutPreference() {
     scene.classList.toggle("is-interactive", immersiveLayout.matches);
+    landing.inert = immersiveLayout.matches;
     if (!immersiveLayout.matches) {
       cancelAnimationFrame(frame);
       frame = 0;
-      transitionScroll = undefined;
-      previousFrameTime = undefined;
-      landing.inert = false;
-      portrait.inert = false;
       for (const shot of [opening, invite, call, team]) shot.inert = false;
-      flight.classList.remove("is-flying");
     }
     scheduleRender();
   }
