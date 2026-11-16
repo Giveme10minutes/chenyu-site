@@ -2,7 +2,9 @@
 
 接续任务前先查看 Git 状态、最近的提交和 [进度](handoff/progress.md)，并阅读 [已定方案](handoff/decisions.md)。未提交的文件可能来自其他聊天，保留其现有内容。
 
-GitHub Pages 从 `main` 的 `docs/` 目录发布。新版首页源码在 `homepage/`，用 `npm run build` 生成 `docs/index.html` 和 `docs/showcase/react/`，旧版主页在 `docs/classic/index.html`。新版的资源保留在 `docs/showcase/`。学习区在 `docs/study/`，由静态 HTML、CSS 和 JavaScript 实现。知识点内容放在 `topics.js`，请保留既有知识点 ID，浏览器进度和直达链接会用到它们。
+线上个人站是 [yuchen.ink](https://yuchen.ink/)，发布仓库是 [Giveme10minutes/chenyu-site](https://github.com/Giveme10minutes/chenyu-site)。发布前切到同级的 `../chenyu-site` 工作目录，以该仓库最新的 `main` 集成改动，并用 `git remote -v` 和 GitHub Pages 设置核对推送仓库、发布方式和域名。线上由 `main` 的 GitHub Actions 构建并发布 `dist/`，以部署成功和线上页面验证为准。
+
+`Giveme10minutes/Giveme10minutes` 保留旧站。本目录的博客实验源码在 `homepage/`，预览构建输出到 `docs/blog/`。旧版页面和资源保存在 `docs/classic/`、`docs/showcase/`，学习区在 `docs/study/`。知识点内容放在 `topics.js`，请保留既有知识点 ID，浏览器进度和直达链接会用到它们。
 
 根据原项目的源码或公开记录更新学习材料，并注明适用版本。区分项目现状、通用原理、改进设想和用户本人确认的贡献。公开仓库里只提交适合公开的内容。
 
