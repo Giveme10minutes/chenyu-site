@@ -40,3 +40,8 @@
 ### 修复触控板换幕卡住 · 2026-11-16
 
 - 修复旧惯性阻挡下一次同向轻扫的问题，兼顾轻微斜滑与反向操作。已通过本地构建与 Chrome 模拟回归，原触控板待复测。见[触控板排查与修复](intro-scene-playback.md#触控板换幕卡住--2026-11-16)。
+
+### 分幕版发布 · 2026-11-16
+
+- `000ab23` 已从 `Giveme10minutes/chenyu-site` 的 `main` 发布到 [线上介绍页](https://yuchen.ink/blog/intro/)。[Pages 部署](https://github.com/Giveme10minutes/chenyu-site/actions/runs/43838024901)成功，线上脚本版本与本地构建一致。
+- Chrome 线上验证了模拟触控板惯性和连续轻扫、反向、键盘、触屏模拟、五人合照跟手退场及书架入口。原触控板的实际手感待复测。
