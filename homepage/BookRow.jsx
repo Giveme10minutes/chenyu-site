@@ -179,31 +179,17 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
           </button>
         ))}
       </div>
-      <div className="book-row-caption">
-        <button type="button" className="book-step shelf-glass-control" aria-label="上一本"
-          disabled={selected === 0 && position === 0} onClick={() => select(target.current - 1)}>
-          <span className="shelf-glass" aria-hidden="true">
-            <span className="shelf-arrow" data-direction="left" />
-          </span>
-        </button>
-        <div className="book-caption-text" aria-live="polite">
-          <h2>{entry.title}</h2>
-          {(entry.date || entry.summary) && <p>
-            {entry.date && <time dateTime={entry.date}>{entry.date}</time>}
-            {entry.date && entry.summary && " · "}
-            {entry.summary}
-          </p>}
-          {entry.href && position === selected && <a className="book-read-link" href={base + entry.href}
-            onClick={(event) => {
-              if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onOpen();
-            }}>阅读全文</a>}
-        </div>
-        <button type="button" className="book-step shelf-glass-control" aria-label="下一本"
-          disabled={selected === last && position === last} onClick={() => select(target.current + 1)}>
-          <span className="shelf-glass" aria-hidden="true">
-            <span className="shelf-arrow" data-direction="right" />
-          </span>
-        </button>
+      <div className="book-row-caption" aria-live="polite">
+        <h2>{entry.title}</h2>
+        {(entry.date || entry.summary) && <p>
+          {entry.date && <time dateTime={entry.date}>{entry.date}</time>}
+          {entry.date && entry.summary && " · "}
+          {entry.summary}
+        </p>}
+        {entry.href && position === selected && <a className="book-read-link" href={base + entry.href}
+          onClick={(event) => {
+            if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onOpen();
+          }}>阅读全文</a>}
       </div>
     </section>
   );
