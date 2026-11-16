@@ -21,7 +21,7 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
   const shelfUrl = navigationBase;
   const introUrl = navigationBase + "intro/";
   const shelfHref = hydrated ? shelfUrl : base;
-  const introHref = hydrated ? introUrl : "intro/";
+  const introHref = hydrated ? introUrl : base + "intro/";
   const assetPath = hydrated ? stableAssets : assets;
 
   const navigate = useCallback((next) => {
@@ -69,9 +69,10 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
       <div className="stage">
         {route === "intro" && <PortraitScene assets={assetPath} />}
         <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
-          restoration={restoration} introHref={introHref} onIntro={(event) => follow(event, "intro")} />
+          restoration={restoration} introHref={introHref} onIntro={(event) => follow(event, "intro")}
+          onShelf={(event) => follow(event, "shelf")} />
         {route === "intro" && <>
-          <a className="shelf-continue" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 →</a>
+          <a className="shelf-continue blog-action blog-glass" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 <span aria-hidden="true">→</span></a>
           <a className="scroll-cue" href="#portrait-revealed" aria-label="向下滚动，点亮肖像">
             <span className="scroll-arrow" aria-hidden="true" />
           </a>

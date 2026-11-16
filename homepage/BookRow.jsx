@@ -191,7 +191,7 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
           {entry.date && entry.summary && " · "}
           {entry.summary}
         </p>}
-        {entry.href && position === selected && <a className="blog-action book-read-link" href={base + entry.href}
+        {entry.href && position === selected && <a className="blog-action blog-glass book-read-link" href={base + entry.href}
           onClick={(event) => {
             if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onOpen();
           }}>阅读全文 <span aria-hidden="true">→</span></a>}

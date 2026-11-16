@@ -1,4 +1,5 @@
 import React from "react";
+import BlogNav from "./BlogNav.jsx";
 
 const assets = "../../../assets/";
 
@@ -17,8 +18,9 @@ export default function ArticlePage({ category, entry, body, version }) {
         <script src={assets + "article-return.js?v=" + version} defer />
       </head>
       <body>
+        <BlogNav shelfHref="../../../" introHref="../../../intro/" />
         <main className="reading-page">
-          <a className="blog-action" href={back}><span aria-hidden="true">←</span> 返回书架</a>
+          <a className="blog-action blog-glass" href={back}><span aria-hidden="true">←</span> 返回书架</a>
           <article>
             <header className="reading-header">
               <p className="reading-meta">
