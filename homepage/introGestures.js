@@ -1,13 +1,17 @@
-const wheelPause = 170;
+const wheelPause = 105;
+const wheelDistance = 12;
 const swipeDistance = 32;
 
 export function bindIntroGestures(scene, { enabled, atPoster, step }) {
   const listeners = new AbortController();
   const { signal } = listeners;
   let wheelTime = -Infinity;
-  let wheelDirection = 0;
+  let wheelSpeed = 0;
   let wheelTravel = 0;
-  let wheelHandled = false;
+  let wheelStep = -Infinity;
+  let steppedDirection = 0;
+  let reverseTravel = 0;
+  let nativeScroll = false;
   let touch;
 
   function shouldStep(direction) {
@@ -15,23 +19,39 @@ export function bindIntroGestures(scene, { enabled, atPoster, step }) {
   }
 
   function wheel(event) {
-    if (!enabled() || event.ctrlKey || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
-    const direction = Math.sign(event.deltaY);
-    if (direction !== wheelDirection || event.timeStamp - wheelTime > wheelPause) {
-      wheelHandled = false;
-      wheelTravel = 0;
+    if (!enabled() || event.ctrlKey || !event.deltaY
+      || Math.abs(event.deltaY) < Math.abs(event.deltaX) * 0.6) return;
+    const unit = event.deltaMode === 0 ? 1 : event.deltaMode === 1 ? 16 : innerHeight;
+    const travel = event.deltaY * unit;
+    const speed = Math.abs(travel);
+    const { timeStamp } = event;
+    if (steppedDirection) {
+      reverseTravel = Math.max(0, reverseTravel - travel * steppedDirection);
     }
-    wheelTime = event.timeStamp;
-    wheelDirection = direction;
-    if (!wheelHandled && !shouldStep(direction)) return;
+    // A new swipe can start during the low-speed tail of the previous one.
+    const renewed = timeStamp - wheelStep >= wheelPause
+      && wheelSpeed <= 4 && speed >= Math.max(6, 2.5 * wheelSpeed);
+    if (timeStamp - wheelTime > wheelPause || renewed || reverseTravel >= wheelDistance) {
+      steppedDirection = 0;
+      wheelTravel = 0;
+      reverseTravel = 0;
+      nativeScroll = false;
+    }
+    wheelTime = timeStamp;
+    wheelSpeed = speed;
+    if (nativeScroll) return;
+    if (!steppedDirection && !shouldStep(Math.sign(travel))) {
+      nativeScroll = true;
+      return;
+    }
 
     event.preventDefault();
-    if (wheelHandled) return;
-    const delta = Math.abs(event.deltaY);
-    wheelTravel += event.deltaMode === 0 ? delta : event.deltaMode === 1 ? delta * 16 : delta * innerHeight;
-    if (wheelTravel >= 22) {
-      wheelHandled = true;
-      step(direction);
+    if (steppedDirection) return;
+    wheelTravel += travel;
+    if (Math.abs(wheelTravel) >= wheelDistance) {
+      steppedDirection = Math.sign(wheelTravel);
+      wheelStep = timeStamp;
+      step(steppedDirection);
     }
   }
 
