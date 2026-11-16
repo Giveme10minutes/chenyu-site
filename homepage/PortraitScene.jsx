@@ -7,7 +7,10 @@ export default function PortraitScene({ assets }) {
         <div className="portrait">
           <img src={assets + "portrait.webp"} width="1122" height="1402" alt="陈煜身穿深蓝色 Polo 衫，直视镜头" />
         </div>
-        <h1 className="portrait-caption">陈煜</h1>
+        <h1 className="portrait-caption">
+          <span className="portrait-greeting" lang="en">You got me</span>{" "}
+          <span className="portrait-name">是我，陈煜</span>
+        </h1>
       </section>
       <section className="portrait-shot portrait-invite">
         <img className="portrait-actor" src={assets + "portrait-invite.webp"} alt="陈煜伸手邀请访客入座" />

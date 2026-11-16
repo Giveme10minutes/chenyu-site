@@ -40,7 +40,8 @@ export function attachScrollScenes(scene, finish) {
     const cueScale = 1 + 0.55 * (1 - (1 - cueZoom) ** 2);
 
     scene.style.setProperty("--portrait-opacity", brightness);
-    opening.style.setProperty("--caption-opacity", ease(between(progress, 0.10, 0.40)));
+    opening.style.setProperty("--greeting-opacity", ease(between(progress, 0.10, 0.32)));
+    opening.style.setProperty("--name-opacity", ease(between(progress, 0.20, 0.40)));
     scene.style.setProperty("--light-width", `${16 + 162 * spread}%`);
     scene.style.setProperty("--light-height", `${8 + 174 * spread}%`);
     scene.style.setProperty("--portrait-scale", 1 + 0.035 * reveal);

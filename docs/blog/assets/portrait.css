@@ -68,6 +68,23 @@ body {
 .portrait-opening .portrait-caption {
   top: 40%;
   left: 62%;
+  right: 5%;
+  font-size: clamp(2.25rem, 5.35vw, 5.75rem);
+}
+
+.portrait-greeting,
+.portrait-name {
+  display: block;
+}
+
+.portrait-greeting {
+  letter-spacing: 0;
+}
+
+.portrait-name {
+  margin-top: .55em;
+  font-size: .42em;
+  font-weight: 500;
 }
 
 .portrait-actor {
@@ -233,7 +250,15 @@ body {
     mask-composite: intersect;
   }
 
-  .is-interactive :is(.portrait-opening, .portrait-invite, .portrait-call) .portrait-caption {
+  .is-interactive .portrait-greeting {
+    opacity: var(--greeting-opacity, 0);
+  }
+
+  .is-interactive .portrait-name {
+    opacity: var(--name-opacity, 0);
+  }
+
+  .is-interactive :is(.portrait-invite, .portrait-call) .portrait-caption {
     opacity: var(--caption-opacity, 0);
   }
 
@@ -405,6 +430,7 @@ body {
 
   .portrait-opening .portrait-caption {
     bottom: 21%;
+    font-size: clamp(2.25rem, 9.5vw, 4rem);
   }
 
   .portrait-team .portrait-caption {
