@@ -62,3 +62,7 @@
 ### 固定时长书架入场发布 · 2026-11-16
 
 - `14eb053` 已推送到 `Giveme10minutes/chenyu-site` 的 `main`，[GitHub Pages 部署](https://github.com/Giveme10minutes/chenyu-site/actions/runs/43859151887)成功。
+
+### 防止向下滚轮连跳 · 2026-11-16
+
+- 向下滚轮换幕前给当前入场留出约 0.67–0.76 秒。过早的向下指令不排队，反向仍可立即返回。Chrome 本地回归通过。见[限制快速滚轮连跳](intro-scene-playback.md#限制快速滚轮连跳--2026-11-16)。
