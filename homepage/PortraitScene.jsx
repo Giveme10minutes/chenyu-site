@@ -1,10 +1,10 @@
 import React from "react";
 
-export default function PortraitScene() {
+export default function PortraitScene({ assets }) {
   return (
     <div className="portrait-frame">
       <div className="portrait">
-        <img src="showcase/portrait.webp" width="1122" height="1402" alt="陈煜身穿深蓝色 Polo 衫，在左上方柔光下直视镜头" />
+        <img src={assets + "portrait.webp"} width="1122" height="1402" alt="陈煜身穿深蓝色 Polo 衫，在左上方柔光下直视镜头" />
       </div>
       <div className="intro">
         <h1>陈煜 <span className="latin-name" lang="en">Chen Yu</span></h1>

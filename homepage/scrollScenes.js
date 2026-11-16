@@ -3,14 +3,17 @@ import { butterflyPaths } from "./butterflyPaths.js";
 const transitionStart = 1.78;
 const transitionEnd = Math.max(...butterflyPaths.map(({ end }) => end));
 
-export function attachScrollScenes(scene) {
+export function attachScrollScenes(scene, finish) {
   const stage = scene.querySelector(".stage");
   const cue = scene.querySelector(".scroll-cue");
   const flight = scene.querySelector(".butterfly-flight");
   const butterflies = [...flight.querySelectorAll(".butterfly")];
   const landing = scene.querySelector(".blog-landing");
+  const skip = scene.querySelector(".shelf-skip");
   const portrait = scene.querySelector(".portrait-frame");
   const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
+
+  scene.style.setProperty("--intro-screens", 1 + transitionEnd);
 
   let frame = 0;
   let transitionScroll;
@@ -58,7 +61,8 @@ export function attachScrollScenes(scene) {
     scene.style.setProperty("--cue-rise", 1 - (1 - cueFade) ** 1.7);
     scene.style.setProperty("--cue-scale", cueScale);
     cue.classList.toggle("is-hidden", cueFade === 1);
-    const target = Math.max(transitionStart, Math.min(transitionEnd, scroll));
+    // Allow the last pixel of travel to round down on fractional viewport sizes.
+    const target = Math.max(transitionStart, Math.min(transitionEnd, scroll + 1 / height));
     if (transitionScroll === undefined || Math.abs(target - transitionScroll) < 0.005) {
       transitionScroll = target;
       previousFrameTime = undefined;
@@ -71,6 +75,7 @@ export function attachScrollScenes(scene) {
     }
 
     renderTransition(transitionScroll, width / height);
+    if (transitionScroll === transitionEnd) finish();
   }
 
   function renderTransition(scroll, aspectRatio) {
@@ -84,7 +89,8 @@ export function attachScrollScenes(scene) {
     landing.style.setProperty("--paper-y", `${79 - 29 * paper}%`);
     landing.style.setProperty("--landing-opacity", content);
     landing.style.setProperty("--landing-offset", `${16 * (1 - content)}px`);
-    landing.inert = content === 0;
+    landing.inert = true;
+    skip.hidden = content > 0.25;
     portrait.inert = portraitExit === 1;
     const isFlying = scroll > transitionStart && scroll < transitionEnd;
     flight.classList.toggle("is-flying", isFlying);
@@ -127,6 +133,7 @@ export function attachScrollScenes(scene) {
       transitionScroll = undefined;
       previousFrameTime = undefined;
       landing.inert = false;
+      skip.hidden = false;
       portrait.inert = false;
       flight.classList.remove("is-flying");
     }
@@ -139,6 +146,8 @@ export function attachScrollScenes(scene) {
   applyLayoutPreference();
 
   return () => {
+    scene.classList.remove("is-interactive");
+    landing.inert = false;
     cancelAnimationFrame(frame);
     removeEventListener("scroll", scheduleRender);
     removeEventListener("resize", scheduleRender);

@@ -4,21 +4,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#000000">
-  <title>陈煜 · 个人博客预览</title>
-  <link rel="preload" href="showcase/butterfly-blue.webp" as="image" media="(prefers-reduced-motion: no-preference)">
-  <link rel="preload" href="showcase/butterfly-ivory.webp" as="image" media="(prefers-reduced-motion: no-preference)">
-  <link rel="preload" href="showcase/butterfly-swallowtail.webp" as="image" media="(prefers-reduced-motion: no-preference)">
-  <link rel="preload" href="showcase/butterfly-amber.webp" as="image" media="(prefers-reduced-motion: no-preference)">
-  <link rel="preload" href="showcase/butterfly-jade.webp" as="image" media="(prefers-reduced-motion: no-preference)">
-  <link rel="preload" href="showcase/butterfly-rose.webp" as="image" media="(prefers-reduced-motion: no-preference)">
-  <link rel="stylesheet" href="showcase/portrait.css?v=butterfly-tail">
-  <link rel="stylesheet" href="showcase/butterfly.css?v=9">
+  <title>{{TITLE}}</title>
+  <link rel="icon" href="{{ASSETS}}butterfly-blue.webp" type="image/webp">
+{{PRELOAD}}
+  <link rel="stylesheet" href="{{ASSETS}}portrait.css?v=bookshelf">
+  <link rel="stylesheet" href="{{ASSETS}}butterfly.css?v=10">
+  <link rel="stylesheet" href="{{ASSETS}}bookshelf.css?v={{VERSION}}">
 </head>
 
 <body>
-  <div id="homepage">{{APP}}</div>
-  <script src="showcase/react/homepage.js?v={{VERSION}}" defer></script>
+  <div id="homepage" data-route="{{ROUTE}}" data-base="{{BASE}}" data-assets="{{ASSETS}}">{{APP}}</div>
+  <script src="{{ASSETS}}react/homepage.js?v={{VERSION}}" defer></script>
 </body>
 
 </html>

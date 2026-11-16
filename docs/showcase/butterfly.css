@@ -1,12 +1,7 @@
 .blog-landing {
   position: relative;
   isolation: isolate;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: clamp(24px, 5svh, 52px);
   min-height: 100svh;
-  padding: 36px 24px;
   color: #213044;
   color-scheme: light;
 }
@@ -17,39 +12,6 @@
   z-index: -1;
   inset: 0;
   background: radial-gradient(ellipse at 52% 39%, #f6f2e9 0%, #ebe4d7 75%);
-}
-
-.blog-landing h2 {
-  margin: 0;
-  font-family: "Songti SC", "Noto Serif CJK SC", serif;
-  font-size: clamp(32px, 6vw, 70px);
-  font-weight: 600;
-  letter-spacing: .06em;
-}
-
-.blog-preview {
-  display: flex;
-  gap: clamp(14px, 3vw, 34px);
-}
-
-.blog-preview p {
-  display: grid;
-  place-items: center;
-  width: clamp(108px, 22vw, 210px);
-  aspect-ratio: .72;
-  margin: 0;
-  padding: 12px 10px 12px 22px;
-  border-radius: 3px 6px 6px 3px;
-  background: linear-gradient(90deg, #bac7ce 10px, #e4ebeb 10px);
-  box-shadow: 4px 7px 17px rgb(37 42 47 / 13%);
-  color: #22374d;
-  font-size: clamp(15px, 2vw, 26px);
-  text-align: center;
-}
-
-.blog-preview p + p {
-  background: linear-gradient(90deg, #324c66 10px, #263b53 10px);
-  color: #f3ebde;
 }
 
 .butterfly-flight {
@@ -74,7 +36,7 @@
 
   .is-interactive .blog-landing > * {
     opacity: var(--landing-opacity, 0);
-    transform: translateY(var(--landing-offset, 16px));
+    translate: 0 var(--landing-offset, 16px);
   }
 
   .is-interactive .butterfly-flight.is-flying {
