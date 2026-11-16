@@ -185,7 +185,7 @@ body {
 
 @media (prefers-reduced-motion: no-preference) {
   .scene.is-interactive {
-    min-height: calc(var(--intro-screens, 1) * 100svh);
+    --shelf-entry-duration: 680ms;
   }
 
   .is-interactive .stage {
@@ -205,11 +205,19 @@ body {
 
   .is-interactive .portrait-frame {
     z-index: 1;
-    translate: 0 var(--poster-offset, 0%);
-    box-shadow: 0 12px 28px rgb(0 0 0 / var(--poster-shadow, 0));
   }
 
-  .is-interactive:not(.is-poster-ready) .stage {
+  .is-interactive.is-entering-shelf .portrait-frame {
+    box-shadow: 0 12px 28px rgb(0 0 0 / .24);
+    animation: portrait-exit var(--shelf-entry-duration) cubic-bezier(.4, 0, .22, 1) both;
+  }
+
+  @keyframes portrait-exit {
+    from { translate: 0 0; }
+    to { translate: 0 calc(-100% - 72px); }
+  }
+
+  .is-interactive .stage {
     touch-action: pan-x pinch-zoom;
   }
 
@@ -256,10 +264,6 @@ body {
 
   .is-interactive :is(.portrait-invite, .portrait-call) .portrait-caption {
     opacity: var(--caption-opacity, 0);
-  }
-
-  .is-interactive .portrait-team {
-    scale: var(--poster-scale, 1);
   }
 
   .is-interactive .portrait-team .portrait-actor {

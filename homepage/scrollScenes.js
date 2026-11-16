@@ -2,10 +2,9 @@ import { bindIntroGestures } from "./introGestures.js";
 
 const shotDurations = [820, 760, 760, 860];
 const handoffDuration = 390;
-const posterTravel = 0.9;
 
 export function attachScrollScenes(scene, finish) {
-  const stage = scene.querySelector(".stage");
+  const portrait = scene.querySelector(".portrait-frame");
   const cue = scene.querySelector(".scroll-cue");
   const landing = scene.querySelector(".blog-landing");
   const shots = [...scene.querySelectorAll(".portrait-shot")];
@@ -13,7 +12,7 @@ export function attachScrollScenes(scene, finish) {
   const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
   let active = -1;
   let playback = 0;
-  let scrollFrame = 0;
+  let enteringShelf = false;
   const atPoster = () => active === shots.length - 1;
 
   function between(progress, start, end) {
@@ -81,8 +80,6 @@ export function attachScrollScenes(scene, finish) {
     shots.forEach((shot, position) => {
       shot.inert = position !== index;
     });
-    scene.classList.toggle("is-poster-ready", atPoster());
-    scene.style.setProperty("--intro-screens", atPoster() ? 1 + posterTravel : 1);
     cue.classList.toggle("is-hidden", index >= 0);
     if (index < 0 && fromBlack) return;
 
@@ -118,39 +115,32 @@ export function attachScrollScenes(scene, finish) {
   }
 
   function step(direction) {
+    if (enteringShelf) return;
+    if (atPoster() && direction > 0) {
+      enteringShelf = true;
+      cancelAnimationFrame(playback);
+      playback = 0;
+      renderTeam(shots[active], 1);
+      settleLayers();
+      portrait.inert = true;
+      scene.classList.add("is-entering-shelf");
+      return;
+    }
     const next = active + direction;
     if (next >= -1 && next < shots.length) show(next);
   }
 
-  function renderPosterExit() {
-    scrollFrame = 0;
-    const offset = atPoster() ? Math.max(0, -scene.getBoundingClientRect().top) : 0;
-    const distance = posterTravel * stage.clientHeight;
-    const exit = offset > 0 ? between(offset + 1, 0, distance) : 0;
-    if (exit > 0 && playback) {
-      cancelAnimationFrame(playback);
-      playback = 0;
-      layers[active].progress = 1;
-      renderTeam(shots[active], 1);
-      settleLayers();
-    }
-
-    const reveal = ease(exit);
-    scene.style.setProperty("--poster-offset", `${-100 * exit}%`);
-    scene.style.setProperty("--poster-scale", 1 - 0.045 * reveal);
-    scene.style.setProperty("--poster-shadow", 0.24 * (1 - reveal));
-    scene.style.setProperty("--shelf-rise", `${24 * (1 - reveal)}px`);
-    if (exit === 1) finish();
-  }
-
-  function scheduleExit() {
-    if (immersiveLayout.matches && !scrollFrame) scrollFrame = requestAnimationFrame(renderPosterExit);
+  function finishPosterExit(event) {
+    if (event.target === portrait && event.animationName === "portrait-exit") finish();
   }
 
   function applyLayoutPreference() {
+    if (enteringShelf && !immersiveLayout.matches) {
+      finish();
+      return;
+    }
     cancelAnimationFrame(playback);
-    cancelAnimationFrame(scrollFrame);
-    playback = scrollFrame = 0;
+    playback = 0;
     scene.classList.toggle("is-interactive", immersiveLayout.matches);
     landing.inert = immersiveLayout.matches;
     if (immersiveLayout.matches) {
@@ -158,7 +148,6 @@ export function attachScrollScenes(scene, finish) {
       settleLayers();
       show(-1);
       window.scrollTo({ top: 0, behavior: "instant" });
-      renderPosterExit();
     } else {
       shots.forEach(shot => { shot.inert = false; });
     }
@@ -169,22 +158,20 @@ export function attachScrollScenes(scene, finish) {
     step(1);
   }
 
-  const unbindGestures = bindIntroGestures(scene, { enabled: () => immersiveLayout.matches, atPoster, step });
+  const unbindGestures = bindIntroGestures(scene, { enabled: () => immersiveLayout.matches, step });
   cue.addEventListener("click", activateCue);
-  addEventListener("scroll", scheduleExit, { passive: true });
-  addEventListener("resize", scheduleExit);
+  portrait.addEventListener("animationend", finishPosterExit);
   immersiveLayout.addEventListener("change", applyLayoutPreference);
   applyLayoutPreference();
 
   return () => {
-    scene.classList.remove("is-interactive", "is-poster-ready");
+    scene.classList.remove("is-interactive", "is-entering-shelf");
+    portrait.inert = false;
     landing.inert = false;
     cancelAnimationFrame(playback);
-    cancelAnimationFrame(scrollFrame);
     unbindGestures();
     cue.removeEventListener("click", activateCue);
-    removeEventListener("scroll", scheduleExit);
-    removeEventListener("resize", scheduleExit);
+    portrait.removeEventListener("animationend", finishPosterExit);
     immersiveLayout.removeEventListener("change", applyLayoutPreference);
   };
 }

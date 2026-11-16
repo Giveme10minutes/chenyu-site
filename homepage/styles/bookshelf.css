@@ -21,7 +21,16 @@
   }
 
   .is-interactive .blog-landing > * {
-    translate: 0 var(--shelf-rise, 24px);
+    translate: 0 24px;
+  }
+
+  .is-interactive.is-entering-shelf .blog-landing > * {
+    animation: shelf-entry var(--shelf-entry-duration) ease-out both;
+  }
+
+  @keyframes shelf-entry {
+    from { translate: 0 24px; }
+    to { translate: 0 0; }
   }
 }
 

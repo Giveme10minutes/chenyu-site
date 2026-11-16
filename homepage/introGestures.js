@@ -2,7 +2,7 @@ const wheelPause = 105;
 const wheelDistance = 12;
 const swipeDistance = 32;
 
-export function bindIntroGestures(scene, { enabled, atPoster, step }) {
+export function bindIntroGestures(scene, { enabled, step }) {
   const listeners = new AbortController();
   const { signal } = listeners;
   let wheelTime = -Infinity;
@@ -11,12 +11,7 @@ export function bindIntroGestures(scene, { enabled, atPoster, step }) {
   let wheelStep = -Infinity;
   let steppedDirection = 0;
   let reverseTravel = 0;
-  let nativeScroll = false;
   let touch;
-
-  function shouldStep(direction) {
-    return !atPoster() || (direction < 0 && window.scrollY <= 1);
-  }
 
   function wheel(event) {
     if (!enabled() || event.ctrlKey || !event.deltaY
@@ -35,16 +30,9 @@ export function bindIntroGestures(scene, { enabled, atPoster, step }) {
       steppedDirection = 0;
       wheelTravel = 0;
       reverseTravel = 0;
-      nativeScroll = false;
     }
     wheelTime = timeStamp;
     wheelSpeed = speed;
-    if (nativeScroll) return;
-    if (!steppedDirection && !shouldStep(Math.sign(travel))) {
-      nativeScroll = true;
-      return;
-    }
-
     event.preventDefault();
     if (steppedDirection) return;
     wheelTravel += travel;
@@ -59,26 +47,19 @@ export function bindIntroGestures(scene, { enabled, atPoster, step }) {
     touch = undefined;
     if (!enabled() || event.touches.length !== 1) return;
     const { clientX, clientY } = event.touches[0];
-    touch = { clientX, clientY, locked: !atPoster(), atTop: window.scrollY <= 1 };
+    touch = { clientX, clientY };
   }
 
-  function swipeDirection(point, threshold = swipeDistance) {
+  function swipeDirection(point) {
     const up = touch.clientY - point.clientY;
     const across = Math.abs(touch.clientX - point.clientX);
-    return Math.abs(up) >= threshold && Math.abs(up) > across ? Math.sign(up) : 0;
-  }
-
-  function touchMove(event) {
-    if (!touch || !enabled() || event.touches.length !== 1) return;
-    if (touch.locked || (touch.atTop && swipeDirection(event.touches[0], 4) < 0)) {
-      event.preventDefault();
-    }
+    return Math.abs(up) >= swipeDistance && Math.abs(up) > across ? Math.sign(up) : 0;
   }
 
   function touchEnd(event) {
     if (!touch || !enabled()) return;
     const direction = swipeDirection(event.changedTouches[0]);
-    if (direction && (touch.locked || (touch.atTop && direction < 0))) step(direction);
+    if (direction) step(direction);
     touch = undefined;
   }
 
@@ -88,7 +69,7 @@ export function bindIntroGestures(scene, { enabled, atPoster, step }) {
     const direction = {
       ArrowDown: 1, PageDown: 1, ArrowUp: -1, PageUp: -1, " ": event.shiftKey ? -1 : 1,
     }[event.key];
-    if (!direction || !shouldStep(direction)) return;
+    if (!direction) return;
     event.preventDefault();
     if (!event.repeat) step(direction);
   }
@@ -96,7 +77,6 @@ export function bindIntroGestures(scene, { enabled, atPoster, step }) {
   window.addEventListener("wheel", wheel, { passive: false, signal });
   window.addEventListener("keydown", keyDown, { signal });
   scene.addEventListener("touchstart", touchStart, { passive: true, signal });
-  scene.addEventListener("touchmove", touchMove, { passive: false, signal });
   scene.addEventListener("touchend", touchEnd, { passive: true, signal });
   scene.addEventListener("touchcancel", () => { touch = undefined; }, { signal });
   return () => listeners.abort();
