@@ -121,6 +121,7 @@
   height: 20px;
   display: grid;
   justify-items: center;
+  transform: rotate(var(--arrow-angle, 0deg)) translateY(var(--arrow-travel, 0px));
 }
 
 .shelf-arrow::before {
@@ -144,9 +145,9 @@
   transform: rotate(45deg);
 }
 
-.shelf-arrow[data-direction="up"] { transform: rotate(180deg); }
-.shelf-arrow[data-direction="left"] { transform: rotate(90deg); }
-.shelf-arrow[data-direction="right"] { transform: rotate(-90deg); }
+.shelf-arrow[data-direction="up"] { --arrow-angle: 180deg; }
+.shelf-arrow[data-direction="left"] { --arrow-angle: 90deg; }
+.shelf-arrow[data-direction="right"] { --arrow-angle: -90deg; }
 
 .shelf-glass-control:focus-visible { outline: none; }
 
@@ -160,8 +161,43 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .shelf-glass { transition: transform 160ms ease, filter 160ms ease; }
-  .shelf-glass-control:enabled:active .shelf-glass { transform: scale(.94); }
+  .shelf-glass {
+    translate: 0 calc(-1 * var(--glass-lift, 0px));
+    scale: var(--glass-scale, 1);
+    transition: translate 180ms ease-out, scale 200ms ease-out, filter 160ms ease;
+  }
+
+  .shelf-arrow { transition: transform 180ms ease-out; }
+
+  @media (hover: hover) and (pointer: fine) {
+    .shelf-glass-control:enabled:hover {
+      --glass-lift: 2.5px;
+      --arrow-travel: 3px;
+    }
+
+    .book-step:enabled:hover {
+      --glass-lift: 1.8px;
+      --arrow-travel: 2px;
+    }
+
+    .shelf-glass-control:enabled:hover .shelf-glass {
+      transition: translate 260ms cubic-bezier(.2, 2.55, .35, 1), scale 240ms cubic-bezier(.2, 1.7, .35, 1), filter 160ms ease;
+    }
+
+    .shelf-glass-control:enabled:hover .shelf-arrow {
+      transition: transform 260ms cubic-bezier(.2, 1.4, .35, 1);
+    }
+  }
+
+  .shelf-glass-control:enabled:active {
+    --glass-lift: 0px;
+    --arrow-travel: 0px;
+    --glass-scale: .94;
+  }
+
+  .shelf-glass-control:enabled:active .shelf-glass {
+    transition: translate 100ms ease-out, scale 100ms ease-out, filter 160ms ease;
+  }
 }
 
 @media (forced-colors: active) {
