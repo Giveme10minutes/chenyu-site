@@ -1,0 +1,19 @@
+{
+  "name": "chenyu-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsx homepage/render.jsx",
+    "build:preview": "tsx homepage/render.jsx --preview"
+  },
+  "dependencies": {
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
+  },
+  "devDependencies": {
+    "markdown-it": "^15.0.3",
+    "tsx": "^4.23.15",
+    "vite": "^7.3.8",
+    "yaml": "^2.9.1"
+  }
+}
