@@ -4,6 +4,7 @@ spine: 项目短名
 summary: 用一句话写项目解决的具体问题。
 # date: "2026-11-16"
 # cover: cover.webp
+# coverStyle: illustrated
 ---
 
 ## 想解决什么
