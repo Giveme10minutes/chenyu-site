@@ -7,6 +7,8 @@ export function bindIntroGestures(scene, { enabled, step }) {
   const { signal } = listeners;
   let wheelTime = -Infinity;
   let wheelSpeed = 0;
+  let wheelPeak = 0;
+  let wheelTrough = Infinity;
   let wheelTravel = 0;
   let wheelStep = -Infinity;
   let steppedDirection = 0;
@@ -23,14 +25,22 @@ export function bindIntroGestures(scene, { enabled, step }) {
     if (steppedDirection) {
       reverseTravel = Math.max(0, reverseTravel - travel * steppedDirection);
     }
-    // A new swipe can start during the low-speed tail of the previous one.
+    // After the momentum has dropped, fresh acceleration can start another swipe.
     const renewed = timeStamp - wheelStep >= wheelPause
-      && wheelSpeed <= 4 && speed >= Math.max(6, 2.5 * wheelSpeed);
+      && (speed >= Math.max(8, 1.75 * wheelTrough)
+        || (wheelSpeed <= 4 && speed >= Math.max(6, 2.5 * wheelSpeed)));
     if (timeStamp - wheelTime > wheelPause || renewed || reverseTravel >= wheelDistance) {
       steppedDirection = 0;
       wheelTravel = 0;
       reverseTravel = 0;
+      wheelPeak = 0;
+      wheelTrough = Infinity;
     }
+    if (steppedDirection && travel * steppedDirection > 0
+      && Math.max(wheelSpeed, speed) <= wheelPeak * 0.6) {
+      wheelTrough = Math.min(wheelTrough, speed);
+    }
+    wheelPeak = Math.max(wheelPeak, speed);
     wheelTime = timeStamp;
     wheelSpeed = speed;
     event.preventDefault();
