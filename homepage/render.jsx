@@ -35,7 +35,7 @@ let installed = false;
 try {
   await build({ build: { outDir: join(assets, "react") } });
   const hash = createHash("sha256").update(await readFile(join(assets, "react/homepage.js")));
-  for (const style of ["portrait.css", "bookshelf.css", "article.css"]) {
+  for (const style of ["portrait.css", "blog.css", "bookshelf.css", "article.css"]) {
     const stylesheet = await readFile(join(root, "homepage/styles", style));
     hash.update(stylesheet);
     await writeFile(join(assets, style), stylesheet);

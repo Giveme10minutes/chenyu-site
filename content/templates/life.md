@@ -4,6 +4,7 @@ spine: 短标题
 summary: 用一句话写这篇记录的主题。
 # date: "2026-11-16"
 # cover: cover.webp
+# coverStyle: photo
 ---
 
 ## 发生了什么

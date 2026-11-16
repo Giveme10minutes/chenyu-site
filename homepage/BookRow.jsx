@@ -159,20 +159,25 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
         }}>
         {row.entries.map((book, index) => (
           <button type="button" key={book.id} data-book-id={book.id} className={`shelf-book tone-${book.tone}`}
+            data-cover-style={book.coverStyle} data-jacket={Boolean(book.jacket)}
             style={bookStyles[index]} aria-label={book.title} aria-pressed={selected === index}
             tabIndex={selected === index ? 0 : -1}
             onClick={() => activate(book, index)}>
             <span className="book-motion" aria-hidden="true">
               <span className="book-box">
                 <span className="book-face book-cover">
-                  {!book.blank && <>
-                    <span className="cover-category">{row.title}</span>
-                    {book.cover ? <img src={base + book.href + book.cover} alt="" draggable="false" />
-                      : <span className="cover-mark">{book.mark}</span>}
+                  {book.jacket && <img src={base + book.href + book.jacket} alt="" draggable="false" />}
+                  {!book.blank && !book.jacket && <>
+                    {book.coverStyle === "type" ? <span className="cover-mark">{book.mark}</span>
+                      : <img src={base + book.href + book.cover} alt="" draggable="false" />}
                     <span className="cover-title">{book.title}</span>
                   </>}
                 </span>
-                <span className="book-face book-spine">{book.blank ? null : book.spine ?? book.title}</span>
+                <span className="book-face book-spine">
+                  {!book.blank && <span className="spine-title">{book.spine ?? book.title}</span>}
+                  {book.coverStyle === "photo" && (book.jacket || book.cover) &&
+                    <img src={base + book.href + (book.jacket ?? book.cover)} alt="" draggable="false" />}
+                </span>
                 <span className="book-face book-pages" />
               </span>
             </span>
@@ -186,10 +191,10 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
           {entry.date && entry.summary && " · "}
           {entry.summary}
         </p>}
-        {entry.href && position === selected && <a className="book-read-link" href={base + entry.href}
+        {entry.href && position === selected && <a className="blog-action blog-glass book-read-link" href={base + entry.href}
           onClick={(event) => {
             if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onOpen();
-          }}>阅读全文</a>}
+          }}>阅读全文 <span aria-hidden="true">→</span></a>}
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useRef, useState } from "react";
 import Footer from "./Footer.jsx";
 import BookRow from "./BookRow.jsx";
+import BlogNav from "./BlogNav.jsx";
 
 function scrollToRow(container, index) {
   container.scrollTo({
@@ -9,7 +10,7 @@ function scrollToRow(container, index) {
   });
 }
 
-export default function Bookshelf({ route, rows, base, restoration, introHref, onIntro }) {
+export default function Bookshelf({ route, rows, base, restoration, introHref, onIntro, onShelf }) {
   const restoredIndex = Math.max(0, rows.findIndex(row => row.id === restoration?.row));
   const [rowIndex, setRowIndex] = useState(restoredIndex);
   const landing = useRef(null);
@@ -77,8 +78,8 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, o
 
   return (
     <section ref={landing} className="blog-landing" aria-labelledby="blog-title" data-shelf-page={route === "shelf"}>
+      <BlogNav shelfHref={base} introHref={introHref} onIntro={onIntro} onShelf={onShelf} current="shelf" />
       <header className="shelf-header">
-        <a className="shelf-back" href={introHref} onClick={onIntro}>← <span>自我介绍</span></a>
         <h2 id="blog-title" tabIndex="-1">陈煜的博客</h2>
         <p>{rows[rowIndex].title}</p>
       </header>
@@ -91,14 +92,12 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, o
             initialBook={restoration?.selections?.[row.id]} onOpen={() => rememberSelection(row.id)} />
         ))}
       </div>
-      <button type="button" className="shelf-switch shelf-glass-control" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}
+      <button type="button" className="shelf-switch" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}
         aria-controls={nextRow.id}>
-        <span className="shelf-glass" aria-hidden="true">
-          <span className="shelf-arrow" data-direction={rowIndex === 0 ? "down" : "up"} />
-        </span>
+        <span className="shelf-switch-circle blog-glass" aria-hidden="true">{rowIndex === 0 ? "↓" : "↑"}</span>
         <span className="shelf-switch-label">{nextRow.title}</span>
       </button>
-      <Footer />
+      <Footer linkClass="blog-action blog-glass" />
     </section>
   );
 }

@@ -11,7 +11,8 @@ export const categories = [
 const markdown = new MarkdownIt({ html: false });
 const tones = new Set(["sand", "green", "rust", "blue"]);
 const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".gif"]);
-const fields = new Set(["title", "spine", "date", "summary", "cover", "tone", "mark", "featured"]);
+const coverStyles = new Set(["photo", "illustrated", "type"]);
+const fields = new Set(["title", "spine", "date", "summary", "cover", "coverStyle", "jacket", "tone", "mark", "featured"]);
 
 function decodeImagePath(src) {
   const path = decodeURIComponent(src);
@@ -47,6 +48,13 @@ async function readArticle(root, category, slug) {
         || date.toISOString().slice(0, 10) !== data.date) throw new Error("date 请填写有效的 YYYY-MM-DD 日期");
     }
     if (data.tone && !tones.has(data.tone)) throw new Error("tone 可选 sand、green、rust、blue");
+    if (data.coverStyle && !coverStyles.has(data.coverStyle)) {
+      throw new Error("coverStyle 可选 photo、illustrated、type");
+    }
+    const coverStyle = data.coverStyle ?? (data.cover ? "illustrated" : "type");
+    if (coverStyle !== "type" && !data.cover && !data.jacket) {
+      throw new Error("照片或图文封面需要填写 cover 或 jacket");
+    }
     const body = source.slice(frontMatter[0].length).trim();
     if (!body) throw new Error("缺少 Markdown 正文");
 
@@ -66,6 +74,7 @@ async function readArticle(root, category, slug) {
     }
 
     const cover = data.cover ? await registerImage(data.cover) : undefined;
+    const jacket = data.jacket ? await registerImage(data.jacket) : undefined;
     const tokens = markdown.parse(body, {});
     for (const token of tokens) {
       for (const child of token.children ?? []) {
@@ -86,6 +95,8 @@ async function readArticle(root, category, slug) {
         tone: data.tone ?? category.tone,
         mark: data.mark ?? Array.from(data.title)[0],
         cover,
+        coverStyle,
+        jacket,
         featured: data.featured,
       },
       body: markdown.renderer.render(tokens, markdown.options, {}),

@@ -1,0 +1,66 @@
+:root {
+  --blog-paper: #f6f2e9;
+  --blog-ink: #26342f;
+  --blog-muted: #555e55;
+  --blog-nav-inset: clamp(12px, 4vw, 56px);
+}
+
+.blog-glass {
+  border: 1px solid rgb(111 98 74 / 24%);
+  border-radius: 999px;
+  background: linear-gradient(155deg, rgb(255 255 255 / 84%), rgb(255 250 238 / 40%)), #ebe1cfbd;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 95%), inset 0 -2px 5px rgb(133 109 75 / 14%),
+    0 3px 9px rgb(66 51 33 / 12%);
+  -webkit-backdrop-filter: blur(8px) saturate(125%);
+  backdrop-filter: blur(8px) saturate(125%);
+}
+
+.blog-action {
+  display: inline-flex;
+  align-items: center;
+  gap: .48em;
+  min-height: 44px;
+  padding-inline: 1em;
+  color: var(--blog-ink);
+  font: 500 .83rem/1.4 system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.blog-action:hover,
+.shelf-switch:hover .blog-glass { background-color: #dbcdb3; }
+
+.blog-action:active,
+.shelf-switch:active .blog-glass { box-shadow: inset 0 2px 5px rgb(89 68 43 / 22%); }
+
+.blog-action:focus-visible,
+.blog-nav a:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }
+
+.blog-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 5px 3px 12px;
+  margin: 14px var(--blog-nav-inset) 0;
+  color: var(--blog-ink);
+}
+
+.blog-nav-links { display: flex; gap: 2px; }
+
+.blog-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: .85em;
+  border-radius: inherit;
+  color: inherit;
+  font: 600 .86rem/1 system-ui, sans-serif;
+  text-decoration: none;
+}
+
+.blog-nav-links a { border-radius: 999px; }
+.blog-nav .blog-brand { font: 700 1.18rem/1 "Songti SC", "Noto Serif CJK SC", serif; }
+.blog-nav a:hover { background: rgb(255 255 255 / 55%); }
+.blog-nav a[aria-current="page"] {
+  background: rgb(255 255 255 / 65%);
+  box-shadow: inset 0 0 0 1px rgb(111 98 74 / 12%);
+}
