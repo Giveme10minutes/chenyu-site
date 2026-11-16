@@ -74,8 +74,12 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
         {route === "intro" && <>
           <ButterflyTransition />
           <a className="shelf-continue" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 →</a>
+          <a className="scroll-cue" href="#portrait-revealed" aria-label="向下滚动，点亮肖像">
+            <span className="scroll-arrow" aria-hidden="true" />
+          </a>
         </>}
       </div>
+      {route === "intro" && <div id="portrait-revealed" />}
     </main>
   );
 }

@@ -6,6 +6,7 @@ const transitionEnd = Math.max(...butterflyPaths.map(({ end }) => end));
 
 export function attachScrollScenes(scene, finish) {
   const stage = scene.querySelector(".stage");
+  const cue = scene.querySelector(".scroll-cue");
   const flight = scene.querySelector(".butterfly-flight");
   const butterflies = [...flight.querySelectorAll(".butterfly")];
   const landing = scene.querySelector(".blog-landing");
@@ -41,6 +42,9 @@ export function attachScrollScenes(scene, finish) {
     const reveal = between(progress, 0.028, 0.448);
     const brightness = clamp(reveal / 0.25);
     const spread = reveal ** 1.72;
+    const cueZoom = between(progress, 0, 0.14);
+    const cueFade = between(progress, 0, 0.40);
+    const cueScale = 1 + 0.55 * (1 - (1 - cueZoom) ** 2);
 
     scene.style.setProperty("--portrait-opacity", brightness);
     opening.style.setProperty("--caption-opacity", ease(between(progress, 0.10, 0.40)));
@@ -56,6 +60,10 @@ export function attachScrollScenes(scene, finish) {
     renderShot(team, ease(between(scroll, 4.07, 4.37)), teamLight);
     team.style.setProperty("--team-scale", 1.12 - 0.12 * teamLight);
     team.style.setProperty("--team-caption", ease(between(scroll, 4.50, 4.84)));
+    scene.style.setProperty("--cue-opacity", 1 - cueFade);
+    scene.style.setProperty("--cue-rise", 1 - (1 - cueFade) ** 1.7);
+    scene.style.setProperty("--cue-scale", cueScale);
+    cue.classList.toggle("is-hidden", cueFade === 1);
     // Allow the last pixel of travel to round down on fractional viewport sizes.
     const target = Math.max(transitionStart, Math.min(transitionEnd, scroll - butterflyOffset + 1 / height));
     if (transitionScroll === undefined || Math.abs(target - transitionScroll) < 0.005) {
