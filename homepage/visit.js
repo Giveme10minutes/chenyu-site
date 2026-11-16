@@ -1,4 +1,4 @@
-const introKey = "chenyu-site:seen-intro";
+export const introKey = "chenyu-site:seen-intro";
 
 export function hasSeenIntro() {
   try {

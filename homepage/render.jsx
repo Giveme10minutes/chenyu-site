@@ -9,6 +9,7 @@ import ArticlePage from "./ArticlePage.jsx";
 import Homepage from "./Homepage.jsx";
 import { readBlog } from "./blogContent.js";
 import { withBlankBooks } from "./bookshelfEntries.js";
+import { introKey } from "./visit.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const preview = process.argv.includes("--preview");
@@ -44,11 +45,9 @@ try {
   await writeFile(join(assets, "article-return.js"), backScript);
   await copyFile(join(root, "homepage/media/portrait.webp"), join(assets, "portrait.webp"));
   await Promise.all(sprites.map(sprite => copyFile(join(root, "homepage/media", sprite), join(assets, sprite))));
-  for (const script of ["root-entry.js", "visit.js"]) {
-    const source = await readFile(join(root, "homepage", script));
-    hash.update(source);
-    await writeFile(join(assets, script), source);
-  }
+  // The previous homepage can still be cached with these two module URLs.
+  await Promise.all(["root-entry.js", "visit.js"].map(script =>
+    copyFile(join(root, "homepage", script), join(assets, script))));
   const version = hash.digest("hex").slice(0, 12);
 
   await writeFile(join(output, "index.html"), `<!doctype html>
@@ -57,13 +56,36 @@ try {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>陈煜 · 个人网站</title>
-  <script type="module" src="blog/assets/root-entry.js?v=${version}"></script>
+  <style>
+    html { color-scheme: dark; background: #000; color: #f4f0e9; }
+    html[data-entry="shelf"] { background: #f6f2e9; }
+    html[data-entry] main { display: none; }
+    body { display: grid; min-height: 100vh; margin: 0; place-items: center; font: 1rem system-ui, sans-serif; }
+    main { padding: 24px; text-align: center; }
+    h1 { font-size: 1.5rem; }
+    a { display: inline-block; padding-block: 8px; color: inherit; text-underline-offset: .22em; }
+  </style>
+  <script>
+    (() => {
+      let seenIntro = false;
+      try {
+        seenIntro = localStorage.getItem(${JSON.stringify(introKey)}) === "1";
+      } catch {}
+      const root = document.documentElement;
+      root.dataset.entry = seenIntro ? "shelf" : "intro";
+      try {
+        location.replace(seenIntro ? "./blog/" : "./blog/intro/");
+      } catch {
+        delete root.dataset.entry;
+      }
+    })();
+  </script>
 </head>
 <body>
   <main>
     <h1>陈煜的个人网站</h1>
-    <p><a id="open-intro" href="blog/intro/">自我介绍</a></p>
-    <p><a id="open-shelf" href="blog/">进入博客</a></p>
+    <p><a href="blog/intro/">自我介绍</a></p>
+    <p><a href="blog/">进入博客</a></p>
   </main>
 </body>
 </html>
