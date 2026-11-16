@@ -109,50 +109,15 @@ body {
   text-wrap: balance;
 }
 
-.scroll-cue {
-  display: none;
-  position: absolute;
-  left: 50%;
-  bottom: max(36px, env(safe-area-inset-bottom));
-  transform:
-    translate(-50%, calc(-1 * clamp(80px, 12vh, 130px) * var(--cue-rise, 0)))
-    scale(var(--cue-scale, 1));
-  transform-origin: center bottom;
-  min-height: 44px;
-  padding: 5px 14px;
-  color: #f0e8db;
-  text-decoration: none;
-  font-size: 1.125rem;
-  font-weight: 500;
-  letter-spacing: .1em;
-  white-space: nowrap;
+@keyframes intro-before-hydration {
+  from { visibility: hidden; }
+  to { visibility: visible; }
 }
 
-.scroll-cue:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 4px;
-}
-
-.scroll-arrow {
-  display: grid;
-  place-items: start center;
-  width: 24px;
-  height: 24px;
-  margin: 12px auto 0;
-}
-
-.scroll-arrow::before {
-  content: "";
-  width: 12px;
-  height: 12px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-}
-
-@keyframes scroll-arrow-dip {
-  0%, 68%, 100% { transform: translateY(0); }
-  32% { transform: translateY(6px); }
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  #homepage[data-route="intro"] .scene:not(.is-interactive) .stage:has(.portrait-frame) {
+    animation: intro-before-hydration 2s step-end;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -176,11 +141,6 @@ body {
 
   .is-interactive .portrait-frame {
     opacity: var(--intro-scene-opacity, 1);
-  }
-
-  .is-interactive #portrait-revealed {
-    position: absolute;
-    top: 82svh;
   }
 
   .is-interactive .portrait-shot {
@@ -219,7 +179,7 @@ body {
     mask-composite: intersect;
   }
 
-  .is-interactive :is(.portrait-invite, .portrait-call) .portrait-caption {
+  .is-interactive :is(.portrait-opening, .portrait-invite, .portrait-call) .portrait-caption {
     opacity: var(--caption-opacity, 0);
   }
 
@@ -233,19 +193,6 @@ body {
 
   .is-interactive .portrait-team .portrait-caption {
     opacity: var(--team-caption, 0);
-  }
-
-  .is-interactive .scroll-cue {
-    display: block;
-    opacity: var(--cue-opacity, 1);
-  }
-
-  .is-interactive .scroll-arrow {
-    animation: scroll-arrow-dip 2.4s ease-in-out infinite;
-  }
-
-  .is-interactive .scroll-cue.is-hidden {
-    visibility: hidden;
   }
 }
 
