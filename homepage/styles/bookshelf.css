@@ -54,23 +54,13 @@
 }
 
 .shelf-skip {
-  z-index: 3;
+  display: flex;
+  width: max-content;
+  margin: 0 auto 16px;
   color: #f4f0e9;
 }
 
-.shelf-skip[hidden] { display: none; }
-
-.is-interactive .shelf-skip {
-  position: absolute;
-  top: max(14px, env(safe-area-inset-top));
-  right: clamp(16px, 4vw, 56px);
-}
-
-.scene:not(.is-interactive) .shelf-skip {
-  display: flex;
-  margin: 0 auto 16px;
-  width: max-content;
-}
+.is-interactive .shelf-skip { display: none; }
 
 .scene:not(.is-interactive) .portrait-frame + .blog-landing { display: none; }
 

@@ -9,7 +9,6 @@ export function attachScrollScenes(scene, finish) {
   const flight = scene.querySelector(".butterfly-flight");
   const butterflies = [...flight.querySelectorAll(".butterfly")];
   const landing = scene.querySelector(".blog-landing");
-  const skip = scene.querySelector(".shelf-skip");
   const portrait = scene.querySelector(".portrait-frame");
   const immersiveLayout = matchMedia("(prefers-reduced-motion: no-preference)");
 
@@ -90,7 +89,6 @@ export function attachScrollScenes(scene, finish) {
     landing.style.setProperty("--landing-opacity", content);
     landing.style.setProperty("--landing-offset", `${16 * (1 - content)}px`);
     landing.inert = true;
-    skip.hidden = content > 0.25;
     portrait.inert = portraitExit === 1;
     const isFlying = scroll > transitionStart && scroll < transitionEnd;
     flight.classList.toggle("is-flying", isFlying);
@@ -133,7 +131,6 @@ export function attachScrollScenes(scene, finish) {
       transitionScroll = undefined;
       previousFrameTime = undefined;
       landing.inert = false;
-      skip.hidden = false;
       portrait.inert = false;
       flight.classList.remove("is-flying");
     }
