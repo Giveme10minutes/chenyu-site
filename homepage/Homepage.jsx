@@ -21,8 +21,10 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
   const scene = useRef(null);
   const shelfUrl = navigationBase;
   const introUrl = navigationBase + "intro/";
+  const aboutUrl = navigationBase + "about/";
   const shelfHref = hydrated ? shelfUrl : base;
   const introHref = hydrated ? introUrl : base + "intro/";
+  const aboutHref = hydrated ? aboutUrl : base + "about/";
   const assetPath = hydrated ? stableAssets : assets;
 
   const navigate = useCallback((next) => {
@@ -71,7 +73,9 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
       <div className="stage">
         {route === "intro" && <PortraitScene assets={assetPath} />}
         <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
-          restoration={restoration} introHref={introHref} onIntro={(event) => follow(event, "intro")}
+          restoration={restoration} introHref={introHref} aboutHref={aboutHref}
+          portraitSrc={assetPath + "portrait.webp"}
+          onIntro={(event) => follow(event, "intro")}
           onShelf={(event) => follow(event, "shelf")} />
         {route === "intro" && <>
           <a className="shelf-continue blog-action blog-glass" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 <span aria-hidden="true">→</span></a>

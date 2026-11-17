@@ -39,7 +39,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 3px 5px 3px 12px;
+  padding: 3px 5px 3px 8px;
   margin: 14px var(--blog-nav-inset) 0;
   color: var(--blog-ink);
 }
@@ -58,7 +58,14 @@
 }
 
 .blog-nav-links a { border-radius: 999px; }
-.blog-nav .blog-brand { font: 700 1.18rem/1 "Songti SC", "Noto Serif CJK SC", serif; }
+.blog-nav .blog-brand { padding-inline: 4px; }
+.blog-portrait {
+  display: block;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  object-fit: cover;
+}
 .blog-nav a:hover { background: rgb(255 255 255 / 55%); }
 .blog-nav a[aria-current="page"] {
   background: rgb(255 255 255 / 65%);

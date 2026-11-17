@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { renderToStaticMarkup, renderToString } from "react-dom/server";
 import { build } from "vite";
 import ArticlePage from "./ArticlePage.jsx";
+import AboutPage from "./AboutPage.jsx";
 import Homepage from "./Homepage.jsx";
 import { readBlog } from "./blogContent.js";
 import { withBlankBooks } from "./bookshelfEntries.js";
@@ -89,6 +90,7 @@ try {
   <main>
     <h1>陈煜的个人网站</h1>
     <p><a href="blog/intro/">自我介绍</a></p>
+    <p><a href="blog/about/">关于我</a></p>
     <p><a href="blog/">进入博客</a></p>
   </main>
 </body>
@@ -142,6 +144,11 @@ try {
     await mkdir(folder, { recursive: true });
     await writeFile(join(folder, "index.html"), html);
   }
+
+  const aboutFolder = join(blogOutput, "about");
+  await mkdir(aboutFolder, { recursive: true });
+  const aboutPage = renderToStaticMarkup(<AboutPage version={version} />);
+  await writeFile(join(aboutFolder, "index.html"), "<!doctype html>\n" + aboutPage);
 
   for (const { category, articles } of blog) {
     for (const { entry, body, images } of articles) {

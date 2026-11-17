@@ -10,7 +10,7 @@ function scrollToRow(container, index) {
   });
 }
 
-export default function Bookshelf({ route, rows, base, restoration, introHref, onIntro, onShelf }) {
+export default function Bookshelf({ route, rows, base, restoration, introHref, aboutHref, portraitSrc, onIntro, onShelf }) {
   const restoredIndex = Math.max(0, rows.findIndex(row => row.id === restoration?.row));
   const [rowIndex, setRowIndex] = useState(restoredIndex);
   const landing = useRef(null);
@@ -78,7 +78,8 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, o
 
   return (
     <section ref={landing} className="blog-landing" aria-labelledby="blog-title" data-shelf-page={route === "shelf"}>
-      <BlogNav shelfHref={base} introHref={introHref} onIntro={onIntro} onShelf={onShelf} current="shelf" />
+      <BlogNav shelfHref={base} introHref={introHref} aboutHref={aboutHref} portraitSrc={portraitSrc}
+        onIntro={onIntro} onShelf={onShelf} current="shelf" />
       <header className="shelf-header">
         <h2 id="blog-title" tabIndex="-1">陈煜的博客</h2>
         <p>{rows[rowIndex].title}</p>
