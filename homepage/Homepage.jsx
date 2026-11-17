@@ -74,7 +74,6 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
         {route === "intro" && <PortraitScene assets={assetPath} />}
         <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
           restoration={restoration} introHref={introHref} aboutHref={aboutHref}
-          portraitSrc={assetPath + "portrait.webp"}
           onIntro={(event) => follow(event, "intro")}
           onShelf={(event) => follow(event, "shelf")} />
         {route === "intro" && <>

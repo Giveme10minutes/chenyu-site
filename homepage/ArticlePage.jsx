@@ -18,8 +18,7 @@ export default function ArticlePage({ category, entry, body, version }) {
         <script src={assets + "article-return.js?v=" + version} defer />
       </head>
       <body>
-        <BlogNav shelfHref="../../../" introHref="../../../intro/" aboutHref="../../../about/"
-          portraitSrc={assets + "portrait.webp"} />
+        <BlogNav shelfHref="../../../" introHref="../../../intro/" aboutHref="../../../about/" />
         <main className="reading-page">
           <a className="reading-back blog-action blog-glass" href={back}><span aria-hidden="true">←</span> 返回书架</a>
           <article>

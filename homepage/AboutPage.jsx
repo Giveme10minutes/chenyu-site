@@ -16,7 +16,7 @@ export default function AboutPage({ version }) {
         <link rel="stylesheet" href={assets + "article.css?v=" + version} />
       </head>
       <body>
-        <BlogNav shelfHref="../" introHref="../intro/" aboutHref="./" portraitSrc={assets + "portrait.webp"} current="about" />
+        <BlogNav shelfHref="../" introHref="../intro/" aboutHref="./" current="about" />
         <main className="reading-page about-page">
           <article>
             <header className="reading-header">
