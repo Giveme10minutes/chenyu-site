@@ -15,3 +15,15 @@
 - 源文件在 `content/blog/`。构建生成 `docs/blog/`，平时只编辑源文件。需要删除一本书时删掉对应的源文件夹，再重新构建。
 - 需要看满书架的效果时，运行 `npm run build:preview`，再运行 `python3 -m http.server 8001 --directory .preview`，打开[满书架预览](http://127.0.0.1:8001/blog/)。这里会附加空白测试书。
 - 公开仓库中的正文和图片均应可公开。私人草稿放在仓库之外。
+
+## 旋转 WebP 照片
+
+在项目根目录运行下面的命令，支持一次传入多张照片。`left`、`right` 分别表示向左、向右旋转 90 度，`180` 表示旋转 180 度：
+
+```sh
+python3 scripts/rotate-webp.py right content/blog/life/snow-mountain/images/example.webp
+python3 scripts/rotate-webp.py left '照片一.webp' '照片二.webp'
+python3 scripts/rotate-webp.py 180 '照片.webp'
+```
+
+默认在原图旁生成带方向后缀的新文件，保留原图；如果确认要直接替换原图，在命令末尾加 `--in-place`。已有同名输出不会被覆盖。脚本使用 macOS 的 `sips` 和 WebP 工具（`brew install webp`），只支持静态 WebP。旋转会重新编码为无损 WebP，不保留原文件的元数据，文件大小可能改变。修改博客图片后记得重新构建预览。

@@ -9,16 +9,16 @@ export default function PortraitScene({ assets }) {
         </div>
         <h1 className="portrait-caption">
           <span className="portrait-greeting" lang="en">You got me</span>{" "}
-          <span className="portrait-name">是我，陈煜</span>
+          <span className="portrait-name">It's me 陈煜</span>
         </h1>
       </section>
       <section className="portrait-shot portrait-invite">
         <img className="portrait-actor" src={assets + "portrait-invite.webp"} alt="陈煜伸手邀请访客入座" />
-        <p className="portrait-caption">请坐。</p>
+        <p className="portrait-caption">请坐</p>
       </section>
       <section className="portrait-shot portrait-call">
         <img className="portrait-actor" src={assets + "portrait-call.webp"} alt="陈煜侧身朝画面外招呼" />
-        <p className="portrait-caption">稍等，<br />我叫一下同事。</p>
+        <p className="portrait-caption">稍等<br />我叫一下同事</p>
       </section>
       <section className="portrait-shot portrait-team">
         <img className="portrait-actor" src={assets + "portrait-team.webp"} alt="五个陈煜同框，分别是跑步、做项目、正面肖像、弹吉他和拍摄时的样子" />
