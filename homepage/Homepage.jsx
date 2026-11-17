@@ -1,9 +1,8 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import PortraitScene from "./PortraitScene.jsx";
 import Bookshelf from "./Bookshelf.jsx";
 import { rememberIntro } from "./visit.js";
 import { attachScrollScenes } from "./scrollScenes.js";
-import { pageTheme } from "./pageTheme.js";
 
 function readShelfState(rows) {
   const saved = history.state?.bookshelf;
@@ -15,8 +14,7 @@ function readShelfState(rows) {
   return rows.some(row => row.id === saved?.row) ? saved : null;
 }
 
-export default function Homepage({ initialRoute, base, assets, rows, navigationBase = base, stableAssets = assets }) {
-  const [route, setRoute] = useState(initialRoute);
+export default function Homepage({ initialRoute: route, base, assets, rows, navigationBase = base, stableAssets = assets }) {
   const [hydrated, setHydrated] = useState(false);
   const [restoration, setRestoration] = useState(null);
   const scene = useRef(null);
@@ -28,60 +26,37 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
   const aboutHref = hydrated ? aboutUrl : base + "about/";
   const assetPath = hydrated ? stableAssets : assets;
 
-  const navigate = useCallback((next) => {
-    const url = next === "shelf" ? shelfUrl : introUrl;
-    if (location.pathname === url) return;
-    if (next === "shelf" && location.pathname === introUrl) rememberIntro();
-    history.pushState(null, "", url);
-    setRoute(next);
-  }, [introUrl, shelfUrl]);
-
   useLayoutEffect(() => {
     document.querySelector('link[rel="icon"]').href = stableAssets + "butterfly-blue.webp";
     setHydrated(true);
     const restoration = history.scrollRestoration;
     history.scrollRestoration = "manual";
-    if (initialRoute === "shelf") setRestoration(readShelfState(rows));
-    const restoreRoute = () => {
-      const next = location.pathname === introUrl ? "intro" : "shelf";
-      setRestoration(next === "shelf" ? readShelfState(rows) : null);
-      setRoute(next);
-    };
-    addEventListener("popstate", restoreRoute);
+    if (route === "shelf") setRestoration(readShelfState(rows));
     return () => {
       history.scrollRestoration = restoration;
-      removeEventListener("popstate", restoreRoute);
     };
-  }, [introUrl, initialRoute, rows, stableAssets]);
+  }, [route, rows, stableAssets]);
 
   useLayoutEffect(() => {
-    const theme = route === "intro" ? "intro" : "paper";
-    document.documentElement.dataset.pageTheme = theme;
-    document.querySelector('meta[name="theme-color"]').content = pageTheme[theme];
     window.scrollTo({ top: 0, behavior: "instant" });
-    document.title = route === "intro" ? "陈煜 · 自我介绍" : "陈煜 · 个人博客";
     if (route === "intro") {
-      return attachScrollScenes(scene.current, () => navigate("shelf"));
+      return attachScrollScenes(scene.current, () => {
+        rememberIntro();
+        // A new document lets iOS sample the shelf color for its system bars.
+        location.assign(shelfUrl);
+      });
     }
     scene.current.querySelector("#blog-title").focus({ preventScroll: true });
-  }, [route, navigate]);
-
-  function follow(event, next) {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    navigate(next);
-  }
+  }, [route, shelfUrl]);
 
   return (
     <main ref={scene} className="scene" tabIndex={-1} aria-label={route === "intro" ? "陈煜的自我介绍" : "陈煜的个人博客"}>
       <div className="stage">
         {route === "intro" && <PortraitScene assets={assetPath} />}
         <Bookshelf key={JSON.stringify(restoration)} route={route} rows={rows} base={shelfHref}
-          restoration={restoration} introHref={introHref} aboutHref={aboutHref}
-          onIntro={(event) => follow(event, "intro")}
-          onShelf={(event) => follow(event, "shelf")} />
+          restoration={restoration} introHref={introHref} aboutHref={aboutHref} />
         {route === "intro" && <>
-          <a className="shelf-continue blog-action blog-glass" href={shelfHref} onClick={(event) => follow(event, "shelf")}>进入书架 <span aria-hidden="true">→</span></a>
+          <a className="shelf-continue blog-action blog-glass" href={shelfHref} onClick={rememberIntro}>进入书架 <span aria-hidden="true">→</span></a>
           <button className="scroll-cue" type="button" aria-label="向下滚动，点亮肖像">
             <span className="scroll-arrow" aria-hidden="true" />
           </button>

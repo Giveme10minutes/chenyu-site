@@ -162,9 +162,18 @@ export function attachScrollScenes(scene, finish) {
     step(1);
   }
 
+  function restorePortrait(event) {
+    if (!event.persisted || !enteringShelf) return;
+    enteringShelf = false;
+    portrait.inert = false;
+    scene.classList.remove("is-entering-shelf");
+    applyLayoutPreference();
+  }
+
   const unbindGestures = bindIntroGestures(scene, { enabled: () => immersiveLayout.matches, step });
   cue.addEventListener("click", activateCue);
   portrait.addEventListener("animationend", finishPosterExit);
+  addEventListener("pageshow", restorePortrait);
   immersiveLayout.addEventListener("change", applyLayoutPreference);
   applyLayoutPreference();
 
@@ -176,6 +185,7 @@ export function attachScrollScenes(scene, finish) {
     unbindGestures();
     cue.removeEventListener("click", activateCue);
     portrait.removeEventListener("animationend", finishPosterExit);
+    removeEventListener("pageshow", restorePortrait);
     immersiveLayout.removeEventListener("change", applyLayoutPreference);
   };
 }

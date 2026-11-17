@@ -11,7 +11,7 @@
   position: absolute;
   z-index: -1;
   inset: 0;
-  background: radial-gradient(ellipse at 40% 28%, var(--blog-paper) 0%, #e6ddcd 84%);
+  background: radial-gradient(ellipse 82% 46% at 42% 50%, #faf7ef, var(--blog-paper));
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -574,7 +574,7 @@
 
 @media (min-width: 980px) and (min-height: 540px) {
   .blog-landing::before {
-    background: radial-gradient(ellipse at 30% 33%, var(--blog-paper) 0%, #e6ddcd 84%);
+    background: radial-gradient(ellipse 72% 46% at 30% 50%, #faf7ef, var(--blog-paper));
   }
 
   .book-track,
