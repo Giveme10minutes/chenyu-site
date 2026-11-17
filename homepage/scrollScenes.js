@@ -2,7 +2,7 @@ import { bindIntroGestures } from "./introGestures.js";
 
 const shotDurations = [820, 760, 760, 860];
 const handoffDuration = 390;
-const posterExitProgress = 0.88;
+const sceneReadyProgress = 0.88;
 
 export function attachScrollScenes(scene, finish) {
   const portrait = scene.querySelector(".portrait-frame");
@@ -115,10 +115,12 @@ export function attachScrollScenes(scene, finish) {
     playback = requestAnimationFrame(play);
   }
 
-  function step(direction) {
+  function step(direction, { renewed = false } = {}) {
     if (enteringShelf) return;
+    const sceneReady = active < 0 || layers[active].progress >= sceneReadyProgress;
+    if (direction > 0 && renewed && !sceneReady) return;
     if (atPoster() && direction > 0) {
-      if (layers[active].progress < posterExitProgress) return;
+      if (!sceneReady) return;
       enteringShelf = true;
       cancelAnimationFrame(playback);
       playback = 0;

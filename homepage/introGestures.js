@@ -26,7 +26,8 @@ export function bindIntroGestures(scene, { enabled, step }) {
       reverseTravel = Math.max(0, reverseTravel - travel * steppedDirection);
     }
     // After the momentum has dropped, fresh acceleration can start another swipe.
-    const renewed = timeStamp - wheelStep >= wheelPause
+    const renewed = steppedDirection !== 0 && timeStamp - wheelTime <= wheelPause
+      && timeStamp - wheelStep >= wheelPause
       && (speed >= Math.max(8, 1.75 * wheelTrough)
         || (wheelSpeed <= 4 && speed >= Math.max(6, 2.5 * wheelSpeed)));
     if (timeStamp - wheelTime > wheelPause || renewed || reverseTravel >= wheelDistance) {
@@ -49,7 +50,7 @@ export function bindIntroGestures(scene, { enabled, step }) {
     if (Math.abs(wheelTravel) >= wheelDistance) {
       steppedDirection = Math.sign(wheelTravel);
       wheelStep = timeStamp;
-      step(steppedDirection);
+      step(steppedDirection, { renewed });
     }
   }
 
