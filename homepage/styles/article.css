@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 
-html { background: var(--blog-paper); color: var(--blog-ink); }
+html { color: var(--blog-ink); }
 
 body {
   margin: 0;

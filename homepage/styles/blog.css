@@ -3,6 +3,13 @@
   --blog-ink: #26342f;
   --blog-muted: #555e55;
   --blog-nav-inset: clamp(12px, 4vw, 56px);
+  background-color: var(--blog-paper);
+  color-scheme: light;
+}
+
+:root[data-page-theme="intro"] {
+  background-color: #000;
+  color-scheme: dark;
 }
 
 .blog-glass {

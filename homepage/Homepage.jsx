@@ -3,6 +3,7 @@ import PortraitScene from "./PortraitScene.jsx";
 import Bookshelf from "./Bookshelf.jsx";
 import { rememberIntro } from "./visit.js";
 import { attachScrollScenes } from "./scrollScenes.js";
+import { pageTheme } from "./pageTheme.js";
 
 function readShelfState(rows) {
   const saved = history.state?.bookshelf;
@@ -54,6 +55,9 @@ export default function Homepage({ initialRoute, base, assets, rows, navigationB
   }, [introUrl, initialRoute, rows, stableAssets]);
 
   useLayoutEffect(() => {
+    const theme = route === "intro" ? "intro" : "paper";
+    document.documentElement.dataset.pageTheme = theme;
+    document.querySelector('meta[name="theme-color"]').content = pageTheme[theme];
     window.scrollTo({ top: 0, behavior: "instant" });
     document.title = route === "intro" ? "陈煜 · 自我介绍" : "陈煜 · 个人博客";
     if (route === "intro") {

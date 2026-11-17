@@ -11,6 +11,7 @@ import Homepage from "./Homepage.jsx";
 import { readBlog } from "./blogContent.js";
 import { withBlankBooks } from "./bookshelfEntries.js";
 import { introKey } from "./visit.js";
+import { pageTheme } from "./pageTheme.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const preview = process.argv.includes("--preview");
@@ -60,10 +61,11 @@ try {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="${pageTheme.intro}">
   <title>陈煜 · 个人网站</title>
   <style>
     html { color-scheme: dark; background: #000; color: #f4f0e9; }
-    html[data-entry="shelf"] { background: #f6f2e9; }
+    html[data-entry="shelf"] { color-scheme: light; background: ${pageTheme.paper}; }
     html[data-entry] main { display: none; }
     body { display: grid; min-height: 100vh; margin: 0; place-items: center; font: 1rem system-ui, sans-serif; }
     main { padding: 24px; text-align: center; }
@@ -78,6 +80,7 @@ try {
       } catch {}
       const root = document.documentElement;
       root.dataset.entry = seenIntro ? "shelf" : "intro";
+      if (seenIntro) document.querySelector('meta[name="theme-color"]').content = ${JSON.stringify(pageTheme.paper)};
       try {
         location.replace(seenIntro ? "./blog/" : "./blog/intro/");
       } catch {
@@ -130,11 +133,14 @@ try {
     { route: "intro", directory: "intro", base: "../", title: "陈煜 · 自我介绍" },
   ]) {
     const assetsHref = base + "assets/";
+    const theme = route === "intro" ? "intro" : "paper";
     const values = {
       ASSETS: assetsHref,
       ROUTE: route,
       BASE: base,
       TITLE: title,
+      THEME: theme,
+      THEMECOLOR: pageTheme[theme],
       VERSION: version,
       APP: renderToString(<Homepage initialRoute={route} base={base} assets={assetsHref} rows={rows} />),
       ROWS: serializedRows,

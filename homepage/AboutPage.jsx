@@ -1,5 +1,6 @@
 import React from "react";
 import BlogNav from "./BlogNav.jsx";
+import { pageTheme } from "./pageTheme.js";
 
 const assets = "../assets/";
 
@@ -9,6 +10,7 @@ export default function AboutPage({ version }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content={pageTheme.paper} />
         <title>关于我 · 陈煜</title>
         <meta name="description" content="陈煜的个人简介" />
         <link rel="icon" href={assets + "butterfly-blue.webp"} type="image/webp" />
