@@ -202,8 +202,11 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
                   </>}
                 </span>
                 {opening && index === selected && <>
+                  <span className="book-face book-back" />
+                  <span className="book-face book-block" />
                   <span className="book-face book-flip book-flip-one" />
                   <span className="book-face book-flip book-flip-two" />
+                  <span className="book-face book-cover-inside" />
                 </>}
                 <span className="book-face book-spine">
                   {!book.blank && <span className="spine-title">{book.spine ?? book.title}</span>}

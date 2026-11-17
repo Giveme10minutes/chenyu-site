@@ -449,8 +449,28 @@
   animation: book-cover-open 460ms cubic-bezier(.45, 0, .55, 1) forwards;
 }
 
-.book-flip {
+.book-back {
   inset-inline: 0;
+  background: var(--cloth);
+  box-shadow: inset 0 0 18px rgb(30 18 12 / 23%);
+  transform: translateZ(calc(var(--spine-width) / -2));
+}
+
+.book-block {
+  inset-inline: 2.5%;
+  top: 1.5%;
+  height: 97%;
+  background:
+    linear-gradient(100deg, rgb(70 50 30 / 18%), transparent 20%),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(120 100 70 / 4%) 3px 4px),
+    #f3ead6;
+  transform: translateZ(calc(var(--spine-width) / 2 - 3px));
+}
+
+.book-flip {
+  inset-inline: 2.5%;
+  top: 1.5%;
+  height: 97%;
   background: linear-gradient(100deg, rgb(70 50 30 / 10%), transparent 25%), #f6eeda;
   transform-origin: left center;
   pointer-events: none;
@@ -461,6 +481,16 @@
 
 .book-row[data-opening="true"] .book-flip {
   animation: book-page-flip 300ms var(--flip-delay) cubic-bezier(.45, 0, .55, 1) both;
+}
+
+.book-cover-inside {
+  inset-inline: 0;
+  background: linear-gradient(105deg, #e6d9bf, #f0e6d1 60%);
+  transform-origin: left center;
+}
+
+.book-row[data-opening="true"] .book-cover-inside {
+  animation: book-cover-open-inside 460ms cubic-bezier(.45, 0, .55, 1) forwards;
 }
 
 .book-opening-veil {
@@ -479,6 +509,11 @@
 @keyframes book-cover-open {
   from { transform: translateZ(calc(var(--spine-width) / 2)) rotateY(0deg); }
   to { transform: translateZ(calc(var(--spine-width) / 2)) rotateY(-150deg); }
+}
+
+@keyframes book-cover-open-inside {
+  from { transform: translateZ(calc(var(--spine-width) / 2)) rotateY(0deg) translateX(50%) rotateY(180deg) translateX(-50%); }
+  to { transform: translateZ(calc(var(--spine-width) / 2)) rotateY(-150deg) translateX(50%) rotateY(180deg) translateX(-50%); }
 }
 
 @keyframes book-page-flip {
