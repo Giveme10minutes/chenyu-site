@@ -34,7 +34,7 @@ featured: true
 
 从雪山回来当天，我和同学一起住了一家 20 块钱的青旅，也算是体验了一下穷游的感觉。
 
-![成都青旅里带帘子的上下铺](images/chengdu-hostel.webp)
+![成都青旅里带帘子的上下铺](images/chengdu-hostel-upright.webp)
 
 ![青旅房间里的床铺和窗户](images/chengdu-hostel-room.webp)
 
