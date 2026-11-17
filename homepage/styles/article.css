@@ -14,7 +14,7 @@ body {
   margin-inline: auto;
   padding-block: clamp(26px, 7vw, 76px) 80px;
   overflow-wrap: anywhere;
-  animation: reading-arrive 700ms ease-out;
+  animation: reading-arrive 500ms ease-out;
 }
 
 body::after {
@@ -24,7 +24,7 @@ body::after {
   z-index: 30;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 45%, #fbf5e6, #f6f2e9 75%);
-  animation: reading-veil-out 800ms ease-out forwards;
+  animation: reading-veil-out 560ms ease-out forwards;
 }
 
 @keyframes reading-arrive {

@@ -151,7 +151,7 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
       return;
     }
     setOpening(true);
-    navigationTimer.current = setTimeout(() => location.assign(base + entry.href), 640);
+    navigationTimer.current = setTimeout(() => location.assign(base + entry.href), 460);
   }
 
   function activate(book, index) {

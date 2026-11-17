@@ -441,12 +441,12 @@
 }
 
 .book-row[data-opening="true"] .shelf-book[aria-pressed="true"] .book-motion {
-  animation: book-open-rise 640ms cubic-bezier(.35, 0, .4, 1) forwards;
+  animation: book-open-rise 460ms cubic-bezier(.35, 0, .4, 1) forwards;
 }
 
 .book-row[data-opening="true"] .shelf-book[aria-pressed="true"] .book-cover {
   transform-origin: left center;
-  animation: book-cover-open 640ms cubic-bezier(.45, 0, .55, 1) forwards;
+  animation: book-cover-open 460ms cubic-bezier(.45, 0, .55, 1) forwards;
 }
 
 .book-flip {
@@ -456,11 +456,11 @@
   pointer-events: none;
 }
 
-.book-flip-one { --flip-z: 1px; --flip-delay: 90ms; }
-.book-flip-two { --flip-z: 2px; --flip-delay: 180ms; }
+.book-flip-one { --flip-z: 1px; --flip-delay: 60ms; }
+.book-flip-two { --flip-z: 2px; --flip-delay: 120ms; }
 
 .book-row[data-opening="true"] .book-flip {
-  animation: book-page-flip 400ms var(--flip-delay) cubic-bezier(.45, 0, .55, 1) both;
+  animation: book-page-flip 300ms var(--flip-delay) cubic-bezier(.45, 0, .55, 1) both;
 }
 
 .book-opening-veil {
@@ -468,7 +468,7 @@
   inset: 0;
   z-index: 30;
   background: radial-gradient(ellipse at 50% 45%, #fbf5e6, #f6f2e9 75%);
-  animation: book-opening-veil 640ms ease-in forwards;
+  animation: book-opening-veil 460ms ease-in forwards;
 }
 
 @keyframes book-open-rise {
