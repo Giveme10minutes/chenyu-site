@@ -36,9 +36,11 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
   const initialIndex = restoredIndex >= 0 ? restoredIndex : Math.max(0, featuredIndex >= 0 ? featuredIndex : firstIndex);
   const [position, setPosition] = useState(initialIndex);
   const [selected, setSelected] = useState(initialIndex);
+  const [opening, setOpening] = useState(false);
   const positionRef = useRef(initialIndex);
   const target = useRef(initialIndex);
   const animation = useRef(0);
+  const navigationTimer = useRef(0);
   const gesture = useRef(null);
   const suppressClick = useRef(false);
   const track = useRef(null);
@@ -46,7 +48,21 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
   const entry = row.entries[selected];
   const bookStyles = arrangeBooks(row.entries.length, position);
 
-  useEffect(() => () => cancelAnimationFrame(animation.current), []);
+  useEffect(() => () => {
+    cancelAnimationFrame(animation.current);
+    clearTimeout(navigationTimer.current);
+  }, []);
+
+  useEffect(() => {
+    const reset = (event) => {
+      if (event.persisted) {
+        clearTimeout(navigationTimer.current);
+        setOpening(false);
+      }
+    };
+    addEventListener("pageshow", reset);
+    return () => removeEventListener("pageshow", reset);
+  }, []);
 
   useEffect(() => {
     const books = track.current;
@@ -126,10 +142,20 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
     select(target.current + step);
   }
 
+  function openEntry() {
+    if (opening || !entry.href) return;
+    onOpen();
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      location.assign(base + entry.href);
+      return;
+    }
+    setOpening(true);
+    navigationTimer.current = setTimeout(() => location.assign(base + entry.href), 640);
+  }
+
   function activate(book, index) {
     if (book.href && index === selected && position === index) {
-      onOpen();
-      location.assign(base + book.href);
+      openEntry();
       return;
     }
     select(index);
@@ -144,7 +170,8 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
   }
 
   return (
-    <section className="book-row" id={row.id} aria-label={row.title} inert={!active} onKeyDown={handleKeys}>
+    <section className="book-row" id={row.id} aria-label={row.title} inert={!active}
+      data-opening={opening || undefined} onKeyDown={handleKeys}>
       <div className="book-track" data-sliding={position !== selected} ref={track}
         onPointerDown={startDrag} onPointerMove={drag}
         onPointerUp={endDrag} onPointerCancel={endDrag}
@@ -193,9 +220,12 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
         </p>}
         {entry.href && position === selected && <a className="blog-action blog-glass book-read-link" href={base + entry.href}
           onClick={(event) => {
-            if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onOpen();
+            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+            event.preventDefault();
+            openEntry();
           }}>阅读全文 <span aria-hidden="true">→</span></a>}
       </div>
+      {opening && <div className="book-opening-veil" aria-hidden="true" />}
     </section>
   );
 }

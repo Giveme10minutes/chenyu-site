@@ -440,6 +440,54 @@
   transform: rotateY(90deg) translateZ(calc(var(--cover-width) / 2));
 }
 
+.book-row[data-opening="true"] .shelf-book[aria-pressed="true"] .book-motion {
+  animation: book-open-rise 640ms cubic-bezier(.35, 0, .4, 1) forwards;
+}
+
+.book-row[data-opening="true"] .shelf-book[aria-pressed="true"] .book-cover {
+  transform-origin: left center;
+  animation: book-cover-open 640ms cubic-bezier(.45, 0, .55, 1) forwards;
+}
+
+.book-row[data-opening="true"] .shelf-book[aria-pressed="true"]::before {
+  content: "";
+  position: absolute;
+  inset: -18% -75%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgb(255 241 207 / 85%), rgb(255 233 182 / 35%) 46%, transparent 72%);
+  pointer-events: none;
+  animation: book-open-glow 640ms ease-out forwards;
+}
+
+.book-opening-veil {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: radial-gradient(ellipse at 50% 45%, #fbf5e6, #f6f2e9 75%);
+  animation: book-opening-veil 640ms ease-in forwards;
+}
+
+@keyframes book-open-rise {
+  from { transform: perspective(calc(var(--book-height) * 8)) translate3d(0, 0, 0); }
+  to { transform: perspective(calc(var(--book-height) * 8)) translate3d(0, -10px, 60px); }
+}
+
+@keyframes book-cover-open {
+  from { transform: translateZ(calc(var(--spine-width) / 2)) rotateY(0deg); }
+  to { transform: translateZ(calc(var(--spine-width) / 2)) rotateY(-150deg); }
+}
+
+@keyframes book-open-glow {
+  0% { opacity: 0; }
+  35% { opacity: .35; }
+  100% { opacity: 1; }
+}
+
+@keyframes book-opening-veil {
+  0%, 30% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
 .book-row-caption {
   position: absolute;
   top: calc(var(--book-top) + var(--book-height) + 12px);
