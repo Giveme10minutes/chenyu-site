@@ -38,15 +38,17 @@ export default function Homepage({ initialRoute: route, base, assets, rows, navi
   }, [route, rows, stableAssets]);
 
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
     if (route === "intro") {
+      window.scrollTo({ top: 0, behavior: "instant" });
       return attachScrollScenes(scene.current, () => {
         rememberIntro();
         // A new document lets iOS sample the shelf color for its system bars.
         location.assign(shelfUrl);
       });
     }
-    scene.current.querySelector("#blog-title").focus({ preventScroll: true });
+    if (!scene.current.contains(document.activeElement)) {
+      scene.current.querySelector("#blog-title").focus({ preventScroll: true });
+    }
   }, [route, shelfUrl]);
 
   return (

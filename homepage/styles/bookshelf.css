@@ -14,6 +14,15 @@
   background: radial-gradient(ellipse 82% 46% at 42% 50%, #faf7ef, var(--blog-paper));
 }
 
+html:has([data-shelf-page="true"]) {
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+[data-shelf-page="true"]::before {
+  position: fixed;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .is-interactive .blog-landing {
     position: absolute;
@@ -147,21 +156,19 @@
   pointer-events: auto;
 }
 
-.shelf-scrollport {
+[data-shelf-page="true"] > :is(.blog-nav, .shelf-header, .shelf-switch, .showcase-footer) {
+  position: fixed;
+}
+
+.shelf-rows {
   position: relative;
   isolation: isolate;
+}
+
+[data-shelf-page="false"] .shelf-rows {
   height: 100svh;
-  overflow: hidden;
+  overflow: clip;
 }
-
-[data-shelf-page="true"] .shelf-scrollport {
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  scroll-snap-type: y mandatory;
-  scrollbar-width: none;
-}
-
-.shelf-scrollport::-webkit-scrollbar { display: none; }
 
 .book-row {
   position: relative;
@@ -180,6 +187,8 @@
 }
 
 .book-row:last-child { height: 100svh; }
+
+[data-shelf-page="true"] .book-row:last-child { min-height: 100dvh; }
 
 .book-track {
   position: absolute;

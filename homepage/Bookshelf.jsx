@@ -3,10 +3,10 @@ import Footer from "./Footer.jsx";
 import BookRow from "./BookRow.jsx";
 import BlogNav from "./BlogNav.jsx";
 
-function scrollToRow(container, index) {
-  container.scrollTo({
+function scrollToRow(container, index, behavior = "smooth") {
+  window.scrollTo({
     top: index === 0 ? 0 : container.lastElementChild.offsetTop,
-    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : behavior,
   });
 }
 
@@ -14,15 +14,20 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, a
   const restoredIndex = Math.max(0, rows.findIndex(row => row.id === restoration?.row));
   const [rowIndex, setRowIndex] = useState(restoredIndex);
   const landing = useRef(null);
-  const scrollport = useRef(null);
+  const rowGroup = useRef(null);
   const nextRow = rows[1 - rowIndex];
 
   useLayoutEffect(() => {
-    const container = scrollport.current;
+    const container = rowGroup.current;
     const index = route === "shelf" ? restoredIndex : 0;
-    container.scrollTo({ top: index === 0 ? 0 : container.lastElementChild.offsetTop, behavior: "instant" });
     setRowIndex(index);
     if (route === "intro") return;
+
+    scrollToRow(container, index, "instant");
+    function updateRow() {
+      setRowIndex(Number(window.scrollY >= container.lastElementChild.offsetTop / 2));
+    }
+    addEventListener("scroll", updateRow, { passive: true });
 
     function focusBook(row) {
       document.getElementById(row)?.querySelector('.shelf-book[aria-pressed="true"]')?.focus({ preventScroll: true });
@@ -51,7 +56,7 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, a
         wheelDestination = undefined;
       }
       lastWheel = event.timeStamp;
-      const distance = event.deltaY * (units === 1 ? 16 : units === 2 ? container.clientHeight : 1);
+      const distance = event.deltaY * (units === 1 ? 16 : units === 2 ? window.innerHeight : 1);
       wheelTravel = Math.sign(distance) === Math.sign(wheelTravel) ? wheelTravel + distance : distance;
       if (Math.abs(wheelTravel) < 36) return;
 
@@ -65,12 +70,13 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, a
     shelf.addEventListener("wheel", handleWheel, { passive: false });
     return () => {
       shelf.removeEventListener("wheel", handleWheel);
+      removeEventListener("scroll", updateRow);
       removeEventListener("pageshow", onPageShow);
     };
   }, [route, restoredIndex, restoration]);
 
   function rememberSelection(row) {
-    const selections = Object.fromEntries([...scrollport.current.children].map(section => [
+    const selections = Object.fromEntries([...rowGroup.current.children].map(section => [
       section.id, section.querySelector('.shelf-book[aria-pressed="true"]')?.dataset.bookId,
     ]));
     history.replaceState({ ...history.state, bookshelf: { row, selections } }, "");
@@ -83,16 +89,13 @@ export default function Bookshelf({ route, rows, base, restoration, introHref, a
         <h2 id="blog-title" tabIndex="-1">陈煜的博客</h2>
         <p>{rows[rowIndex].title}</p>
       </header>
-      <div className="shelf-scrollport" ref={scrollport} onScroll={(event) => {
-        const container = event.currentTarget;
-        setRowIndex(Number(container.scrollTop >= container.lastElementChild.offsetTop / 2));
-      }}>
+      <div className="shelf-rows" ref={rowGroup}>
         {rows.map((row, index) => (
           <BookRow key={row.id} row={row} base={base} active={rowIndex === index}
             initialBook={restoration?.selections?.[row.id]} onOpen={() => rememberSelection(row.id)} />
         ))}
       </div>
-      <button type="button" className="shelf-switch" onClick={() => scrollToRow(scrollport.current, 1 - rowIndex)}
+      <button type="button" className="shelf-switch" onClick={() => scrollToRow(rowGroup.current, 1 - rowIndex)}
         aria-controls={nextRow.id}>
         <span className="shelf-switch-circle blog-glass" aria-hidden="true">{rowIndex === 0 ? "↓" : "↑"}</span>
         <span className="shelf-switch-label">{nextRow.title}</span>
