@@ -51,7 +51,7 @@
 .shelf-header {
   position: absolute;
   z-index: 2;
-  top: clamp(80px, 12svh, 112px);
+  top: calc(clamp(80px, 12svh, 112px) + var(--blog-safe-top));
   inset-inline: 0;
   text-align: center;
   pointer-events: none;
@@ -96,7 +96,7 @@
   position: absolute;
   z-index: 3;
   top: 50%;
-  right: max(clamp(10px, 4vw, 56px), env(safe-area-inset-right));
+  right: max(clamp(10px, 4vw, 56px), var(--blog-safe-right));
   transform: translateY(-50%);
   flex-direction: column;
   gap: 7px;
@@ -124,8 +124,8 @@
 
 .blog-landing .showcase-footer {
   position: absolute;
-  bottom: calc(var(--peek) + 8px);
-  left: clamp(12px, 4vw, 56px);
+  bottom: calc(var(--peek) + 8px + var(--blog-safe-bottom));
+  left: max(var(--blog-nav-inset), var(--blog-safe-left));
   padding: 0;
   pointer-events: none;
 }
@@ -184,6 +184,8 @@
 .book-track {
   position: absolute;
   inset: var(--book-top) 0 auto;
+  left: var(--blog-safe-left);
+  right: var(--blog-safe-right);
   height: var(--book-height);
   overflow-x: clip;
   touch-action: pan-y pinch-zoom;
@@ -529,7 +531,8 @@
 .book-row-caption {
   position: absolute;
   top: calc(var(--book-top) + var(--book-height) + 12px);
-  inset-inline: max(12px, calc((100% - 338px) / 2));
+  left: max(12px, var(--blog-safe-left), calc((100% - 338px) / 2));
+  right: max(12px, var(--blog-safe-right), calc((100% - 338px) / 2));
   text-align: center;
 }
 
@@ -551,13 +554,13 @@
 @media (max-width: 480px) {
   .shelf-switch {
     top: auto;
-    bottom: calc(var(--peek) + 12px);
+    bottom: calc(var(--peek) + 12px + var(--blog-safe-bottom));
     transform: none;
   }
 }
 
 @media (max-height: 490px) {
-  .shelf-header { top: 73px; }
+  .shelf-header { top: calc(73px + var(--blog-safe-top)); }
   .shelf-header p { margin-top: 4px; }
   .book-row-caption { top: calc(var(--book-top) + var(--book-height) + 4px); }
   .book-row-caption h2 { font-size: 17px; }
@@ -577,12 +580,14 @@
     background: radial-gradient(ellipse 72% 46% at 30% 50%, #faf7ef, var(--blog-paper));
   }
 
-  .book-track,
   .book-row::before { inset-inline-end: 43%; }
+
+  .book-track { right: max(43%, var(--blog-safe-right)); }
 
   .book-row-caption {
     top: calc(var(--book-top) + var(--book-height) / 2);
-    inset-inline: 61% 13%;
+    left: max(61%, var(--blog-safe-left));
+    right: max(13%, var(--blog-safe-right));
     transform: translateY(-50%);
     text-align: left;
   }

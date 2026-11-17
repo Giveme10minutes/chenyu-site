@@ -10,9 +10,10 @@ body {
 }
 
 .reading-page {
-  width: min(100% - 40px, 680px);
-  margin-inline: auto;
+  margin-left: max(20px, var(--blog-safe-left), calc((100% - 680px) / 2));
+  margin-right: max(20px, var(--blog-safe-right), calc((100% - 680px) / 2));
   padding-block: clamp(26px, 7vw, 76px) 80px;
+  padding-bottom: max(80px, var(--blog-safe-bottom));
   overflow-wrap: anywhere;
   animation: reading-arrive 500ms ease-out;
 }

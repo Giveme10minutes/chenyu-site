@@ -3,6 +3,10 @@
   --blog-ink: #26342f;
   --blog-muted: #555e55;
   --blog-nav-inset: clamp(12px, 4vw, 56px);
+  --blog-safe-top: env(safe-area-inset-top, 0px);
+  --blog-safe-right: env(safe-area-inset-right, 0px);
+  --blog-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --blog-safe-left: env(safe-area-inset-left, 0px);
   background-color: var(--blog-paper);
   color-scheme: light;
 }
@@ -48,6 +52,9 @@
   justify-content: space-between;
   padding: 3px 5px 3px 12px;
   margin: 14px var(--blog-nav-inset) 0;
+  margin-top: calc(14px + var(--blog-safe-top));
+  margin-left: max(var(--blog-nav-inset), var(--blog-safe-left));
+  margin-right: max(var(--blog-nav-inset), var(--blog-safe-right));
   color: var(--blog-ink);
 }
 

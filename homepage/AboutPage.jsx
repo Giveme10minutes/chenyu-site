@@ -9,7 +9,7 @@ export default function AboutPage({ version }) {
     <html lang="zh-CN">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
         <meta name="theme-color" content={pageTheme.paper} />
         <title>关于我 · 陈煜</title>
         <meta name="description" content="陈煜的个人简介" />

@@ -140,6 +140,7 @@ try {
       BASE: base,
       TITLE: title,
       THEME: theme,
+      VIEWPORTFIT: route === "shelf" ? ", viewport-fit=cover" : "",
       THEMECOLOR: pageTheme[theme],
       VERSION: version,
       APP: renderToString(<Homepage initialRoute={route} base={base} assets={assetsHref} rows={rows} />),
