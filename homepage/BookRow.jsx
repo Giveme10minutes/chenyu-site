@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 const coverWidth = 0.56;
 const spineWidth = 0.16;
@@ -200,6 +201,10 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
                     <span className="cover-title">{book.title}</span>
                   </>}
                 </span>
+                {opening && index === selected && <>
+                  <span className="book-face book-flip book-flip-one" />
+                  <span className="book-face book-flip book-flip-two" />
+                </>}
                 <span className="book-face book-spine">
                   {!book.blank && <span className="spine-title">{book.spine ?? book.title}</span>}
                   {book.coverStyle === "photo" && (book.jacket || book.cover) &&
@@ -225,7 +230,7 @@ export default function BookRow({ row, active, base, initialBook, onOpen }) {
             openEntry();
           }}>阅读全文 <span aria-hidden="true">→</span></a>}
       </div>
-      {opening && <div className="book-opening-veil" aria-hidden="true" />}
+      {opening && createPortal(<div className="book-opening-veil" aria-hidden="true" />, document.body)}
     </section>
   );
 }
