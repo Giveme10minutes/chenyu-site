@@ -14,12 +14,12 @@ const imageExtensions = new Set([".jpg", ".jpeg", ".png", ".webp", ".avif", ".gi
 const coverStyles = new Set(["photo", "illustrated", "type"]);
 const fields = new Set(["title", "spine", "date", "summary", "cover", "coverStyle", "jacket", "tone", "mark", "featured"]);
 
-function decodeImagePath(src) {
+function decodeMediaPath(src, extensions = imageExtensions) {
   const path = decodeURIComponent(src);
   const segments = path.replace(/^\.\//, "").split("/");
   if (path.includes("\\") || segments.some(segment => !segment || segment === "." || segment === "..")
-    || !imageExtensions.has(extname(path).toLowerCase())) {
-    throw new Error(`图片需要是文章文件夹里的 JPG、PNG、WebP、AVIF 或 GIF · ${src}`);
+    || !extensions.has(extname(path).toLowerCase())) {
+    throw new Error(`媒体文件路径无效或格式不受支持 · ${src}`);
   }
   return segments;
 }
@@ -59,8 +59,8 @@ async function readArticle(root, category, slug) {
     if (!body) throw new Error("缺少 Markdown 正文");
 
     const images = new Map();
-    async function registerImage(src) {
-      const segments = decodeImagePath(src);
+    async function registerImage(src, extensions = imageExtensions) {
+      const segments = decodeMediaPath(src, extensions);
       const path = join(...segments);
       if (!images.has(path)) {
         const realFolder = await realpath(folder);
@@ -80,6 +80,15 @@ async function readArticle(root, category, slug) {
       for (const child of token.children ?? []) {
         if (child.type !== "image") continue;
         const src = child.attrGet("src");
+        const description = child.content;
+        if (description.startsWith("视频：")) {
+          const label = description.slice(3).trim();
+          if (!label) throw new Error("视频需要填写说明");
+          const video = await registerImage(src, new Set([".mp4", ".webm"]));
+          child.type = "html_inline";
+          child.content = `<video controls playsinline preload="metadata" aria-label="${markdown.utils.escapeHtml(label)}"><source src="${markdown.utils.escapeHtml(video)}" type="${extname(video).toLowerCase() === ".mp4" ? "video/mp4" : "video/webm"}">你的浏览器不支持播放视频。</video>`;
+          continue;
+        }
         if (/^https?:\/\//i.test(src)) continue;
         child.attrSet("src", await registerImage(src));
       }

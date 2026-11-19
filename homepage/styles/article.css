@@ -102,3 +102,11 @@ body::after {
   border-left: 2px solid #bcb2a3;
   color: #536172;
 }
+
+.reading-body video {
+  display: block;
+  width: 100%;
+  max-height: 65vh;
+  background: #171715;
+  margin-block: 0 30px;
+}
